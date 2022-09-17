@@ -16,8 +16,8 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:src="@mipmap/ic_gov_gr"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_gov_gr" />
     </FrameLayout>
 
 

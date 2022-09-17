@@ -5,13 +5,12 @@
     android:id="@+id/info_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient"
-    >
+    android:background="@color/blue">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_1"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         app:layout_constraintTop_toTopOf="parent">
 
 
@@ -24,26 +23,26 @@
             android:maxHeight="30dp"
             android:text="Title"
             android:textColor="@color/white"
-            android:textSize="16.5sp"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_type"
+            android:id="@+id/tv_address_full"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="plug type"
+            android:layout_marginStart="10dp"
+            android:text="Addrress full"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="10sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4sp"
             android:layout_marginEnd="10dp"
             android:text="Κωδ. Σταθμού"
             android:textColor="@color/white"
@@ -55,13 +54,13 @@
             android:id="@+id/tv_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+
             android:layout_marginEnd="10dp"
             android:text="LOC_ID"
             android:textColor="@color/white"
-            android:textSize="13sp"
+            android:textSize="10sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_1" />
+            app:layout_constraintTop_toBottomOf="@id/tv_1" />-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -76,59 +75,76 @@
         app:dividerInsetStart="10dp"
         app:layout_constraintTop_toBottomOf="@id/constraint_1" />
 
-
-    <include
-        android:id="@+id/lay_location_info"
-        layout="@layout/location_info_layout" />
-
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/divider3"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="4dp"
-        app:dividerColor="@color/white"
-        app:dividerInsetEnd="10dp"
-        app:dividerInsetStart="10dp"
-        app:layout_constraintTop_toBottomOf="@id/lay_location_info" />
-
-    <TextView
-        android:id="@+id/tv_3"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ρευματοδότες"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toBottomOf="@+id/divider1"
+        android:nestedScrollingEnabled="true"
 
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/divider4"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="4dp"
-        app:dividerColor="#56E6E6E6"
-        app:dividerInsetEnd="20dp"
-        app:dividerInsetStart="20dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_3" />
+        android:scrollbarSize="6dp">
 
-    <LinearLayout
-        android:id="@+id/linear2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:weightSum="100"
-        app:layout_constraintTop_toBottomOf="@+id/divider4">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <ListView
-            android:id="@+id/listview"
-            android:layout_marginHorizontal="10dp"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            tools:listitem="@layout/list_item"
-            android:nestedScrollingEnabled="true"/>
+            <TextView
+                android:id="@+id/tv_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Σημεία Φόρτισης"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
 
-    </LinearLayout>
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                app:dividerColor="#56E6E6E6"
+                app:dividerInsetEnd="20dp"
+                app:dividerInsetStart="20dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_3" />
 
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:nestedScrollingEnabled="false"
+                android:id="@+id/parent_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintHeight_max="420dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/light_blue_rounded"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider4"
+                />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                app:dividerColor="@color/white"
+                app:dividerInsetEnd="10dp"
+                app:dividerInsetStart="10dp"
+                app:layout_constraintTop_toBottomOf="@id/parent_recyclerview" />
+
+            <include
+                android:id="@+id/lay_location_info"
+                layout="@layout/location_info_layout" />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

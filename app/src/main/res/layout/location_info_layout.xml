@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_constraintTop_toBottomOf="@+id/divider1">
-
+    app:layout_constraintTop_toBottomOf="@+id/divider3">
 
 
     <TextView
@@ -14,7 +13,8 @@
         android:text="Τοποθεσία"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,125 +28,145 @@
         app:dividerInsetStart="20dp"
         app:layout_constraintTop_toBottomOf="@id/tv_2" />
 
-    <LinearLayout
-        android:id="@+id/linear1"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="100"
         app:layout_constraintTop_toBottomOf="@id/divider2">
 
         <ImageView
-            android:layout_width="50sp"
-            android:layout_height="50sp"
-            android:layout_gravity="center"
-            android:src="@mipmap/ic_pin_64_foreground" />
+            android:id="@+id/image_1"
+            android:layout_width="40sp"
+            android:layout_height="40sp"
+            android:layout_marginStart="10dp"
+            android:src="@mipmap/ic_pin_64_foreground"
+            app:layout_constraintBottom_toTopOf="@id/linear3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
+        <TableLayout
+            android:id="@+id/table1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingVertical="2dp"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
 
-            <TextView
-                android:id="@+id/tv_address"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:text="D anagnostou 9"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
+            app:layout_constraintBottom_toTopOf="@id/linear3"
+            app:layout_constraintStart_toEndOf="@id/image_1"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TableRow
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:gravity="start">
+
+                <TextView
+                    android:id="@+id/tv_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:text="D anagnostou 9"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+            </TableRow>
+
+            <TableRow>
 
                 <TextView
                     android:id="@+id/tv_postal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="19014"
-                    android:textColor="@color/white"
+                    android:text="19014 Oropos"
+                    android:textColor="#FFFFFF"
                     android:textSize="14sp" />
+            </TableRow>
+
+            <TableRow>
 
                 <TextView
-                    android:id="@+id/tv_city"
+                    android:id="@+id/tv_country"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Oropos"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                    android:text="Greece"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14dp" />
+            </TableRow>
+        </TableLayout>
+
+        <ImageView
+            android:id="@+id/image_2"
+            android:layout_marginStart="10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_baseline_my_location_24_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/image_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_1" />
+
+
+        <LinearLayout
+            android:id="@+id/linear3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@id/image_2"
+            app:layout_constraintStart_toStartOf="@id/table1"
+            app:layout_constraintTop_toBottomOf="@id/table1">
+
 
             <TextView
-                android:id="@+id/tv_country"
+                android:id="@+id/tv_lat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Greece"
+                android:layout_gravity="start"
+                android:text="37.567345"
                 android:textColor="@color/white"
-                android:textSize="14dp" />
+                android:textSize="14sp" />
 
-            <LinearLayout
-                android:layout_marginStart="0dp"
-                android:id="@+id/linear3"
+            <TextView
+                android:id="@+id/tv_long"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="10dp"
-                    android:text="Συντεταγμένες:"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"/>
-
-                <TextView
-                    android:id="@+id/tv_lat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="10dp"
-                    android:text="37.567345"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"/>
-
-                <TextView
-                    android:id="@+id/tv_long"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="10dp"
-                    android:text="23.434234"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"/>
-
-
-            </LinearLayout>
-
-
+                android:layout_gravity="start"
+                android:text="23.434234"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
         </LinearLayout>
 
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_locate"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:id="@+id/fab_locate1"
+            style="@style/SquareFloatingActionButtonStyle"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:layout_marginTop="5dp"
             android:clickable="true"
             android:elevation="6dp"
             android:focusable="true"
             android:src="@drawable/ic_directions_foreground"
-            app:borderWidth="1dp"
-            app:fabCustomSize="60dp"
-            app:maxImageSize="50dp"
+            app:borderWidth="0dp"
+            app:fabCustomSize="60sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="50dp"
+            app:layout_constraintTop_toBottomOf="@id/table1"
+            app:maxImageSize="60sp"
             app:pressedTranslationZ="12dp"
-            app:rippleColor="@color/blue"
-            style="@style/SquareFloatingActionButtonStyle"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="5dp"/>
+            app:rippleColor="@color/blue" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintTop_toBottomOf="@id/constraint_2">
+    </RelativeLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

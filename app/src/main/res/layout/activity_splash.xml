@@ -29,7 +29,7 @@
             android:layout_height="100dp"
             android:fontFamily="@font/oceanwide_semibold"
             android:gravity="center"
-            android:text="Electrokinisi"
+            android:text="reCharge"
             android:textColor="#edf0f5"
             android:textSize="40sp" />
     </FrameLayout>

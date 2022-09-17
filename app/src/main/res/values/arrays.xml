@@ -1,12 +1,38 @@
 <resources>
     <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <string-array name="evse_status_entries">
+        <item>Available</item>
+        <item>Blocked</item>
+        <item>Charging</item>
+        <item>Inoperative</item>
+        <item>Out of order</item>
+        <item>Reserved</item>
+        <item>Χωρίς περιορισμό</item>
     </string-array>
 
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+    <string-array name="evse_status_values">
+        <item>AVAILABLE</item>
+        <item>BLOCKED</item>
+        <item>CHARGING</item>
+        <item>INOPERATIVE</item>
+        <item>OUTOFORDER</item>
+        <item>RESERVED</item>
+        <item>NORESTRICTION</item>
+    </string-array>
+
+
+
+
+
+    <string-array name="evse_plug_entries">
+        <item>Cable</item>
+        <item>Socket</item>
+        <item>Χωρίς περιορισμό</item>
+    </string-array>
+
+    <string-array name="evse_plug_values">
+        <item>CABLE</item>
+        <item>SOCKET</item>
+        <item>NORESTRICTION</item>
     </string-array>
 </resources>

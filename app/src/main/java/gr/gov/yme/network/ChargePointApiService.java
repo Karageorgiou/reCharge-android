@@ -2,8 +2,10 @@ package gr.gov.yme.network;
 
 import java.util.Map;
 
-import gr.gov.yme.models.locations.FeatureCollection;
-import gr.gov.yme.models.point.Root;
+import gr.gov.yme.network.receivers.FeatureReceiver;
+import gr.gov.yme.network.receivers.LocationsReceiver;
+import gr.gov.yme.network.receivers.LocationSingleReceiver;
+import gr.gov.yme.network.receivers.TokenReceiver;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -14,14 +16,20 @@ public interface ChargePointApiService {
     Call<TokenReceiver> getToken();
 
     @POST("GetLocations")
-    Call<FeatureCollection> createFeatureCollection(@Body Token token);
+    Call<FeatureReceiver> getLocations(@Body Token token);
+
+    @POST("GetPLocations")
+    Call<FeatureReceiver> getPLocations(@Body BodyWithFilters bodyWithFilters);
 
     @POST("GetLocation")
-    Call<Root> getLocation(@Body Map<String, Object> body);
+    Call<LocationSingleReceiver> getLocation(@Body Map<String, Object> body);
 
+
+    @Deprecated
     @POST("GetLocationsDetails")
-    Call<Root> getLocationsDetails(@Body Token token);
+    Call<LocationsReceiver> getLocationsDetails(@Body Token token);
 
-
-
+    @Deprecated
+    @POST("GetPLocationsDetails")
+    Call<LocationsReceiver> getPLocationsDetails(@Body BodyWithFilters bodyWithFilters);
 }

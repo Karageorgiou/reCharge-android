@@ -3,6 +3,8 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        //OSM Bonus Pack
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:7.0.4"
@@ -11,11 +13,7 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-/*allprojects {
-    repositories {
-        mavenCentral()
-    }
-}*/
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir
