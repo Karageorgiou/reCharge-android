@@ -68,8 +68,10 @@ import java.util.Map;
 
 import gr.gov.yme.R;
 import gr.gov.yme.models.feature.Feature;
+import gr.gov.yme.models.location.Image;
 import gr.gov.yme.network.receivers.FeatureReceiver;
 import gr.gov.yme.util.EvseItemAdapter;
+import gr.gov.yme.util.ImageAdapter;
 import gr.gov.yme.util.WrapContentLinearLayoutManager;
 import gr.gov.yme.network.receivers.LocationsReceiver;
 import gr.gov.yme.models.location.ChargePointLocation;
@@ -206,8 +208,10 @@ public class MapActivity extends AppCompatActivity {
     RecyclerView ParentRecyclerViewItem;
 
     public List<Evse> evseList = new ArrayList<>();
-
     public EvseItemAdapter evseItemAdapter;
+
+    public List<Image> imageList = new ArrayList<>();
+    public ImageAdapter imageAdapter;
 
 
     MapView map = null;
@@ -872,6 +876,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void removeMarkers() {
+        InfoWindow.closeAllInfoWindowsOn(map);
         map.getOverlays().forEach(overlay -> {
             if (overlay instanceof Marker) {
                 map.getOverlays().remove(overlay);
@@ -918,6 +923,18 @@ public class MapActivity extends AppCompatActivity {
             evseItemAdapter.notifyItemInserted(j);
             Log.e("j", String.valueOf(j));
         }
+
+        /*imageList.clear();
+        try {
+            for (int i = 0; i < location.images.size(); i++) {
+                imageList.add(location.images.get(i));
+                imageAdapter.notifyItemInserted(i);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+
+
     }
 
     public void getFiltersFromView() {
@@ -1050,7 +1067,6 @@ public class MapActivity extends AppCompatActivity {
         );
     }
 
-
     private void applyFilters() {
         getFiltersFromView();
 
@@ -1072,7 +1088,6 @@ public class MapActivity extends AppCompatActivity {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
     }
-
 
     @SuppressLint("MissingPermission")
     private void getLastLocation() {

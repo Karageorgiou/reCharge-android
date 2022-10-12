@@ -34,7 +34,7 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
 
         // Here we inflate the corresponding
         // layout of the parent item
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.parent_item, viewGroup, false);   //todo change parent_item layout file
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.parent_item, viewGroup, false);   //todo: change parent_item layout file
 
         return new EvseViewHolder(view);
     }

@@ -6,6 +6,8 @@ import gr.gov.yme.models.location.Evse;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +15,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdapter.ConnectorViewHolder> {
 
+    private static final String TAG = "ConnectorItemAdapter";
     private List<Evse.Connector> connectorItemList;
 
     // Constructor
@@ -78,20 +84,44 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
         try {
             connectorViewHolder.power.setText(connectorItem.maxElectricPower.toString());
         } catch (Exception e) {
-            Log.e("TAG", e.getMessage());
+            Log.e(TAG, e.getMessage());
             connectorViewHolder.power.setText("N/A");
 
         }
 
 
-        String[] parts = connectorItem.lastUpdated.split("T");
-        String date = parts[0];
-        String time = parts[1];
+        String dateNtime = connectorItem.lastUpdated.toLowerCase(Locale.ROOT).replace("t"," ");
+        String newDate = getNewDate(dateNtime);
+        Log.i(TAG,newDate);
+        //String time = " ";
 
-        connectorViewHolder.last_update_date.setText(date);
-        connectorViewHolder.last_update_time.setText(time);
+        connectorViewHolder.last_update_date.setText(newDate);
+        //connectorViewHolder.last_update_time.setText(time);
 
     }
+
+    public String getNewDate(String dateAndTime){
+
+        SimpleDateFormat oldFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        oldFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        String dueDateAsNormal ="";
+        try {
+            value = oldFormatter.parse(dateAndTime);
+            SimpleDateFormat newFormatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss ");
+
+            newFormatter.setTimeZone(TimeZone.getDefault());
+            dueDateAsNormal = newFormatter.format(value);
+        } catch (ParseException e) {
+            Log.e(TAG,e.getMessage());
+            e.printStackTrace();
+        }
+
+        return dueDateAsNormal;
+    }
+
+
+
 
     @Override
     public int getItemCount() {
@@ -119,7 +149,7 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
         TextView amp;
         TextView power;
         TextView last_update_date;
-        TextView last_update_time;
+        //TextView last_update_time;
 
 
         ConnectorViewHolder(View itemView) {
@@ -133,7 +163,7 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
             amp = itemView.findViewById(R.id.connector_amp);
             power = itemView.findViewById(R.id.connector_power);
             last_update_date = itemView.findViewById(R.id.connector_last_updated_date);
-            last_update_time = itemView.findViewById(R.id.connector_last_updated_time);
+            //last_update_time = itemView.findViewById(R.id.connector_last_updated_time);
         }
     }
 }

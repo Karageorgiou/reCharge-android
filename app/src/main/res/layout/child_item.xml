@@ -221,14 +221,14 @@
                         android:textColor="@color/black"
                         android:textSize="9sp" />
 
-                    <TextView
+                    <!--<TextView
                         android:id="@+id/connector_last_updated_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="2dp"
                         android:text="13:42"
                         android:textColor="@color/black"
-                        android:textSize="9sp" />
+                        android:textSize="9sp" />-->
 
 
                 </LinearLayout>
