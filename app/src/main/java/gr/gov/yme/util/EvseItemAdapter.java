@@ -87,7 +87,7 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
                 evseViewHolder
                         .ChildRecyclerView
                         .getContext(),
-                LinearLayoutManager.HORIZONTAL,
+                LinearLayoutManager.VERTICAL,
                 false);
 
         // Since this is a nested layout, so

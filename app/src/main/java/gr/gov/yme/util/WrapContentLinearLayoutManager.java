@@ -12,6 +12,10 @@ public class WrapContentLinearLayoutManager extends LinearLayoutManager {
         super(context);
     }
 
+    public WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout){
+        super(context,orientation,reverseLayout);
+    }
+
     //... constructor
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {

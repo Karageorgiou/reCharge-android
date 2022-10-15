@@ -20,6 +20,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,7 +52,6 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
-import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
@@ -64,16 +64,18 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import gr.gov.yme.R;
 import gr.gov.yme.models.feature.Feature;
 import gr.gov.yme.models.location.Image;
 import gr.gov.yme.network.receivers.FeatureReceiver;
+import gr.gov.yme.util.CustomCopyrightOverlay;
 import gr.gov.yme.util.EvseItemAdapter;
 import gr.gov.yme.util.ImageAdapter;
 import gr.gov.yme.util.WrapContentLinearLayoutManager;
-import gr.gov.yme.network.receivers.LocationsReceiver;
 import gr.gov.yme.models.location.ChargePointLocation;
 import gr.gov.yme.models.location.Evse;
 import gr.gov.yme.network.receivers.LocationSingleReceiver;
@@ -93,10 +95,12 @@ public class MapActivity extends AppCompatActivity {
     private String TAG = "MapActivity ";
 
 
+
     Context ctx;
     ChargePointLocation currLocation;
     Location lastUserLocation;
 
+    Marker lastMarker;
 
     boolean isFirstTime;
 
@@ -188,7 +192,8 @@ public class MapActivity extends AppCompatActivity {
 /////////////////////////////////////////////////////////////////
 
 
-    WrapContentLinearLayoutManager layoutManager;
+    WrapContentLinearLayoutManager layoutManager1;
+    WrapContentLinearLayoutManager layoutManager2;
 
     public Toolbar toolbar;
     public TextView tv_title;
@@ -201,11 +206,20 @@ public class MapActivity extends AppCompatActivity {
     public TextView tv_long;
     public TextView tv_lat;
 
+
+
+    public View info;
+    public TextView iw_type;
+    public TextView iw_address;
+    public TextView iw_status;
+
+
     public ImageView ic_drag;
 
     ConstraintLayout constraintLayout;
 
-    RecyclerView ParentRecyclerViewItem;
+    RecyclerView parentRecyclerViewItem;
+    RecyclerView imagesRecyclerViewItem;
 
     public List<Evse> evseList = new ArrayList<>();
     public EvseItemAdapter evseItemAdapter;
@@ -370,7 +384,14 @@ public class MapActivity extends AppCompatActivity {
         tv_lat = findViewById(R.id.tv_lat);
         ic_drag = findViewById(R.id.ic_drag);
         constraintLayout = findViewById(R.id.constraint_1);
-        ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
+        parentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
+        imagesRecyclerViewItem = findViewById(R.id.recycler_view_images);
+
+        /*info = findViewById(R.id.info_win);
+        iw_type = findViewById(R.id.iw_type);
+        iw_address = findViewById(R.id.iw_address);
+        iw_status = findViewById(R.id.iw_status);*/
+
     }
 
     /******************* Initialization Methods *******************/
@@ -405,7 +426,7 @@ public class MapActivity extends AppCompatActivity {
                 .build();
         tokenRetrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(TOKEN_URL)
+                .baseUrl(BASE_URL)
                 .client(authorizationClient)
                 .build();
         tokenChargePointApiService = tokenRetrofit.create(ChargePointApiService.class);
@@ -414,13 +435,13 @@ public class MapActivity extends AppCompatActivity {
         //LOCATIONS CLIENT
         locationsRetrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(TOKEN_URL)
+                .baseUrl(BASE_URL)
                 .build();
         locationsChargePointApiService = locationsRetrofit.create(ChargePointApiService.class);
 
         filteredLocationsRetrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(TOKEN_URL)
+                .baseUrl(BASE_URL)
                 .build();
         filteredLocationsChargePointApiService = filteredLocationsRetrofit.create(ChargePointApiService.class);
     }
@@ -452,6 +473,7 @@ public class MapActivity extends AppCompatActivity {
         //rotation gestures
         rotationGestureOverlay = new RotationGestureOverlay(map);
         rotationGestureOverlay.setEnabled(true);
+
         map.setMultiTouchControls(true);
         map.setVerticalMapRepetitionEnabled(false);
         map.getOverlays().add(rotationGestureOverlay);
@@ -459,12 +481,11 @@ public class MapActivity extends AppCompatActivity {
         //scale bar
         final DisplayMetrics displayMetrics = ctx.getResources().getDisplayMetrics();
         scaleBarOverlay = new ScaleBarOverlay(map);
-        //scaleBarOverlay.setCentred(true);
         scaleBarOverlay.setAlignBottom(true);
         scaleBarOverlay.setEnableAdjustLength(true);
         scaleBarOverlay.setScaleBarOffset(
-                displayMetrics.widthPixels/20,
-                displayMetrics.heightPixels-(displayMetrics.heightPixels/13));
+                displayMetrics.widthPixels / 20,
+                displayMetrics.heightPixels - (displayMetrics.heightPixels / 13));
         map.getOverlays().add(scaleBarOverlay);
 
         //loading color
@@ -478,6 +499,14 @@ public class MapActivity extends AppCompatActivity {
                 return super.onSingleTapConfirmed(e, mapView);
             }
         });
+
+        CustomCopyrightOverlay copyrightOverlay = new CustomCopyrightOverlay(ctx);
+        copyrightOverlay.setAlignRight(true);
+        copyrightOverlay.setCopyrightNotice(getResources().getString(R.string.copyright));
+
+        copyrightOverlay.setOffset(displayMetrics.widthPixels / 50, displayMetrics.heightPixels - (displayMetrics.heightPixels / 13));
+        map.getOverlays().add(copyrightOverlay);
+
     }
 
     private void initBottomSheet() {
@@ -492,10 +521,8 @@ public class MapActivity extends AppCompatActivity {
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-                int state = bottomSheetBehavior.getState();
-                Log.d(TAG, "bottomSheetBehavior " + "onStateChanged" + state);
-                if (state == BottomSheetBehavior.STATE_COLLAPSED) {
+                Log.d(TAG, "bottomSheetBehavior " + "onStateChanged" + newState);
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     if (isFirstTime) {
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         isFirstTime = false;
@@ -507,14 +534,14 @@ public class MapActivity extends AppCompatActivity {
                     filter_button.setAlpha(1f);
                     filter_button.setClickable(true);
                     ic_drag.setImageDrawable(icDragUp);
-                } else if (state == BottomSheetBehavior.STATE_EXPANDED) {
+                } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     ic_drag.setImageDrawable(icDragDown);
                     gps_button.setAlpha(0f);
                     gps_button.setClickable(false);
                     filter_button.setAlpha(0f);
                     filter_button.setClickable(false);
                     navigate_button.setClickable(false);
-                } else if (state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                } else if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
                     ic_drag.setImageDrawable(icDragDown);
                     navigate_button.setAlpha(1f);
                     navigate_button.setClickable(true);
@@ -541,10 +568,15 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void initRecyclerViews() {
-        layoutManager = new WrapContentLinearLayoutManager(MapActivity.this);
+        layoutManager1 = new WrapContentLinearLayoutManager(MapActivity.this, WrapContentLinearLayoutManager.HORIZONTAL, false);
         evseItemAdapter = new EvseItemAdapter(evseList);
-        ParentRecyclerViewItem.setAdapter(evseItemAdapter);
-        ParentRecyclerViewItem.setLayoutManager(layoutManager);
+        parentRecyclerViewItem.setAdapter(evseItemAdapter);
+        parentRecyclerViewItem.setLayoutManager(layoutManager1);
+
+        layoutManager2 = new WrapContentLinearLayoutManager(MapActivity.this, WrapContentLinearLayoutManager.HORIZONTAL, false);
+        imageAdapter = new ImageAdapter(imageList);
+        imagesRecyclerViewItem.setLayoutManager(layoutManager2);
+        imagesRecyclerViewItem.setAdapter(imageAdapter);
     }
 
     private void initListeners() {
@@ -730,7 +762,7 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
-
+    @Deprecated
     public void setPointsOnMap(List<ChargePointLocation> locations, ChargePointApiService chargePointApiService, Token token) {
         Log.i(TAG, "setPointsOnMap:");
 
@@ -748,6 +780,7 @@ public class MapActivity extends AppCompatActivity {
                     currentMarkerLocation = location;
                     Log.d("markerClick ", "touched marker");
                     if (!marker.isInfoWindowShown()) {
+                        //InfoWindow.closeAllInfoWindowsOn(map);
                         Map<String, Object> locRequestMap = new HashMap<>();
                         locRequestMap.put("location_id", location.openApiLocation.locationId);
                         locRequestMap.put("token", token.token);
@@ -798,6 +831,8 @@ public class MapActivity extends AppCompatActivity {
         Log.i(TAG, "setFeaturesOnMap:");
 
         markerClusterer = new RadiusMarkerClusterer(ctx);
+        //markerClusterer.setMaxClusteringZoomLevel(15);
+        markerClusterer.setRadius(200);
         map.getOverlays().add(markerClusterer);
 
         features.forEach(feature -> {
@@ -811,6 +846,7 @@ public class MapActivity extends AppCompatActivity {
                 public boolean onMarkerClick(Marker marker, MapView map) {
                     currentMarkerCoordinates = feature.geometry.coordinates;
                     Log.d("markerClick ", "touched marker");
+                    lastMarker = marker;
                     if (!marker.isInfoWindowShown()) {
                         Map<String, Object> locRequestMap = new HashMap<>();
                         locRequestMap.put("location_id", feature.properties.locationId);
@@ -872,6 +908,7 @@ public class MapActivity extends AppCompatActivity {
         marker.setId(latitude.toString() + longitude.toString());
         // map.getOverlays().add(marker);
         markerClusterer.add(marker);
+
         return marker;
     }
 
@@ -887,24 +924,120 @@ public class MapActivity extends AppCompatActivity {
     public void setMarkerInfo(Marker marker) {
         Drawable pin = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_pin_foreground, null);
         Drawable pin_selected = ResourcesCompat.getDrawable(getResources(), R.mipmap.ic_pin_selected_foreground, null);
-        InfoWindow infoWindow = new InfoWindow(R.layout.info_window_layout, map) {
+
+
+        InfoWindow infoWindow = new InfoWindow(R.layout.info_window_layout,map) {
+
             @Override
             public void onOpen(Object item) {
+
+                Marker activeMarker = (Marker) item;
+                iw_type = activeMarker.getInfoWindow().getView().findViewById(R.id.iw_type);
+                iw_address = activeMarker.getInfoWindow().getView().findViewById(R.id.iw_address);
+                iw_status = activeMarker.getInfoWindow().getView().findViewById(R.id.iw_status);
+
+                String target;
+                final String[] connectorTypes = new String[currLocation.evses.size()];
+                AtomicInteger iterator = new AtomicInteger();
+                currLocation.evses.forEach(evse -> {
+                    evse.connectors.forEach(connector -> {
+                        connectorTypes[iterator.get()] = connector.standard + " | ";
+                        iterator.getAndIncrement();
+                    });
+                });
+                List<String> values = new ArrayList<String>();
+                for (String data : connectorTypes) {
+                    if (data != null) {
+                        values.add(data);
+                    }
+                }
+                //infoWindow.setRelatedObject(R.layout.info_window_layout);
+                //target = values.toArray(new String[values.size()]);
+                target=values.toString();
+
+
+                    // split the string by spaces in a
+                    String a[] = target.split(" ");
+
+                    String T1 = "IEC_62196_T1";
+                    String T2 = "IEC_62196_T2";
+                    String T1C = "IEC_62196_T1_COMBO";
+                    String T2C = "IEC_62196_T2_COMBO";
+                    String CHAD = "CHADEMO";
+                    String DOM = "DOMESTIC_F";
+
+
+                    // search for pattern in a
+                    int T1count = 0,T2count = 0,T1Ccount = 0,T2Ccount = 0,CHADcount = 0,DOMcount = 0;
+                    for (int i = 0; i < a.length; i++)
+                    {
+                        // if match found increase count
+                        if (T1.equals(a[i])){
+                            T1count++;
+                        }else if (T2.equals(a[i])){
+                            T2count++;
+                        }else if (T1C.equals(a[i])){
+                            T1Ccount++;
+                        }else if (T2C.equals(a[i])){
+                            T2Ccount++;
+                        }else if (CHAD.equals(a[i])){
+                            CHADcount++;
+                        }else if (DOM.equals(a[i])){
+                            DOMcount++;
+                        }
+                    }
+
+                String types = "|";
+                    if(T1count>0){
+                        types=types+T1count+"x Type 1"+" | ";
+                    }
+                    if(T2count>0){
+                        types=types+T2count+"x Type 2"+" | ";
+                    }
+                    if(T1Ccount>0){
+                        types=types+T1Ccount+"x Type 1 Combo"+" | ";
+                    }
+                    if(T2Ccount>0){
+                        types=types+T2Ccount+"x Type 2 Combo"+" | ";
+                    }
+                    if(CHADcount>0){
+                        types=types+CHADcount+"x Chademo"+" | ";
+                    }
+                    if(DOMcount>0){
+                        types=types+DOMcount+"x Domestic"+" | ";
+                    }
+
+
+                iw_type.setText(types);
+                iw_address.setText(currLocation.address + " , " + currLocation.city + " , " + currLocation.postalCode);
+                iw_status.setText(currLocation.evses.get(0).status);
+
+
+
+                Log.i(TAG, "Info Window Open: "+ item.getClass().toString());
                 marker.setIcon(pin_selected);
-                bottomSheetBehavior.setHideable(false);
             }
+
 
             @Override
             public void onClose() {
+                Log.i(TAG, "Info Window Closed");
                 marker.setIcon(pin);
                 bottomSheetBehavior.setHideable(true);
                 hideBottomSheet();
             }
         };
         marker.setInfoWindow(infoWindow);
+        bottomSheetBehavior.setHideable(false);
+
     }
 
+
     private void updateBottomSheetInfo(ChargePointLocation location) {
+
+
+
+
         /*float distance = Location.distanceBetween(location.coordinates.latitude,
                 location.coordinates.longitude,
                 );*/
@@ -917,23 +1050,23 @@ public class MapActivity extends AppCompatActivity {
         tv_lat.setText(location.coordinates.latitude);
 
         evseList.clear();
-        Log.d("location.evse.size()", String.valueOf(location.evses.size()));
         for (int j = 0; j < location.evses.size(); j++) {
             evseList.add(location.evses.get(j));
             evseItemAdapter.notifyItemInserted(j);
-            Log.e("j", String.valueOf(j));
         }
 
-        /*imageList.clear();
-        try {
+        imageList.clear();
+        //imagesRecyclerViewItem.getLayoutParams().height = 0;
+        ViewGroup.LayoutParams params = imagesRecyclerViewItem.getLayoutParams();
+        params.height = 0;
+        imagesRecyclerViewItem.setLayoutParams(params);
+        if (location.images != null) {
             for (int i = 0; i < location.images.size(); i++) {
+                Log.v(TAG, "i: " + i);
                 imageList.add(location.images.get(i));
                 imageAdapter.notifyItemInserted(i);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
+        }
 
     }
 
@@ -955,7 +1088,7 @@ public class MapActivity extends AppCompatActivity {
         filterValue_ac3 = pref.getBoolean(ac3_Key, false);
 
 
-        filterValue_plug = pref.getString(plug_Key,"NORESTRICTION");
+        filterValue_plug = pref.getString(plug_Key, "NORESTRICTION");
         filterValue_status = pref.getString(status_Key, "NORESTRICTION");
 
 
@@ -1046,15 +1179,14 @@ public class MapActivity extends AppCompatActivity {
         BodyWithFilters.CenterPointCoordinates centerPointCoordinates = new BodyWithFilters.CenterPointCoordinates("", "");
         String maxNumberOfResponsePoints = "";
 
-        String ConnectorFormat="";
-        if(filterValue_plug=="NORESTRICTION"){
+        String ConnectorFormat = "";
+        if (filterValue_plug == "NORESTRICTION") {
             ConnectorFormat = "";
-        }else if(filterValue_plug=="SOCKET"){
-            ConnectorFormat=filterValue_plug;
-        }else if(filterValue_plug=="CABLE"){
-            ConnectorFormat=filterValue_plug;
+        } else if (filterValue_plug == "SOCKET") {
+            ConnectorFormat = filterValue_plug;
+        } else if (filterValue_plug == "CABLE") {
+            ConnectorFormat = filterValue_plug;
         }
-
 
 
         getPointsFiltered(
