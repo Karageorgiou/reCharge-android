@@ -37,10 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginHorizontal="20dp"
-
-                android:orientation="vertical"
-
-                >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -50,7 +47,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
-                        android:layout_marginVertical="1dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="1dp"
                         android:text="Τύπος:"
                         android:textColor="#DDDDDD" />
 
@@ -59,7 +57,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
-                        android:layout_marginVertical="1dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="1dp"
                         android:text="Type 2" />
 
                 </LinearLayout>

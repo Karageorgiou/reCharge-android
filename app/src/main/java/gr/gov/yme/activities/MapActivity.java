@@ -64,10 +64,10 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import dev.shreyaspatil.MaterialDialog.MaterialDialog;
 import gr.gov.yme.R;
 import gr.gov.yme.models.feature.Feature;
 import gr.gov.yme.models.location.Image;
@@ -94,8 +94,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MapActivity extends AppCompatActivity {
     private String TAG = "MapActivity ";
 
-    CustomCopyrightOverlay copyrightOverlay;
+    BodyWithFilters bodyWithFilters;
     TextView copyr;
+    MaterialDialog pinLoading;
+    MaterialDialog mapLoading;
     Context ctx;
     ChargePointLocation currLocation;
     Location lastUserLocation;
@@ -158,6 +160,8 @@ public class MapActivity extends AppCompatActivity {
     public static final String schuko_Key = "key_schuko";
     public static final String tesla_Key = "key_tesla";
     public static final String plug_Key = "key_plug";
+    public static final String status_Key = "key_status";
+
 
     boolean filterValue_type1;
     boolean filterValue_type2;
@@ -185,10 +189,9 @@ public class MapActivity extends AppCompatActivity {
     boolean filterValue_socket;
     boolean filterValue_cable;
     String filterValue_plug;
-
-    public static final String status_Key = "key_status";
-
     String filterValue_status;
+
+
 /////////////////////////////////////////////////////////////////
 
 
@@ -412,6 +415,16 @@ public class MapActivity extends AppCompatActivity {
         iw_address = findViewById(R.id.iw_address);
         iw_status = findViewById(R.id.iw_status);*/
 
+        Log.d(TAG, "Loading Dialog Created");
+        mapLoading = new MaterialDialog.Builder(this)
+                .setAnimation(R.raw.bucket_loading)
+                .setMessage("Φόρτωση Σημείων")
+                .build();
+        pinLoading = new MaterialDialog.Builder(this)
+                .setAnimation(R.raw.three_dots_loading)
+                .setMessage("Φόρτωση Τοποθεσίας")
+                .build();
+
     }
 
     /******************* Initialization Methods *******************/
@@ -505,7 +518,7 @@ public class MapActivity extends AppCompatActivity {
         scaleBarOverlay.setEnableAdjustLength(true);
         scaleBarOverlay.setScaleBarOffset(
                 displayMetrics.widthPixels / 20,
-                displayMetrics.heightPixels - (displayMetrics.heightPixels / 13));
+                displayMetrics.heightPixels - (displayMetrics.heightPixels / 12));
         map.getOverlays().add(scaleBarOverlay);
 
         //loading color
@@ -520,7 +533,6 @@ public class MapActivity extends AppCompatActivity {
             }
         });
 
-
         copyr = findViewById(R.id.tv_copy);
         copyr.setText(R.string.copyright);
         copyr.setClickable(true);
@@ -529,7 +541,7 @@ public class MapActivity extends AppCompatActivity {
         copyr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"clicked copyright notice");
+                Log.d(TAG, "clicked copyright notice");
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.openstreetmap.org/copyright"));
                 browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -677,8 +689,11 @@ public class MapActivity extends AppCompatActivity {
     /******************* ---------------------- *******************/
 
     public void getToken() {
-        getTokenCall = tokenChargePointApiService.getToken();
 
+
+        mapLoading.show();
+
+        getTokenCall = tokenChargePointApiService.getToken();
         getTokenCall.enqueue(new Callback<TokenReceiver>() {
 
             @Override
@@ -698,6 +713,10 @@ public class MapActivity extends AppCompatActivity {
     }
 
     public void getTokenWithFilters() {
+        Log.d(TAG, "Loading Dialog Created");
+
+        mapLoading.show();
+
         getGetTokenWithFiltersCall = tokenChargePointApiService.getToken();
         getGetTokenWithFiltersCall.enqueue(new Callback<TokenReceiver>() {
 
@@ -722,6 +741,7 @@ public class MapActivity extends AppCompatActivity {
         hideBottomSheet();
         removeMarkers();
 
+
         Log.i(TAG, "getPoints");
         getLocationsCall = locationsChargePointApiService.getLocations(token);
         getLocationsCall.enqueue(new Callback<FeatureReceiver>() {
@@ -734,6 +754,10 @@ public class MapActivity extends AppCompatActivity {
                 featureList = new ArrayList<>(featureReceiver.features);
 
                 setFeaturesOnMap(featureList, locationsChargePointApiService, token);
+
+                if (mapLoading != null) {
+                    mapLoading.dismiss();
+                }
             }
 
             @Override
@@ -752,7 +776,9 @@ public class MapActivity extends AppCompatActivity {
         hideBottomSheet();
         removeMarkers();
         Log.i(TAG, "getPointsFiltered");
-        BodyWithFilters bodyWithFilters = new BodyWithFilters(token.token,
+
+
+        bodyWithFilters = new BodyWithFilters(token.token,
                 centerPointCoordinates,
                 maxNumberOfResponsePoints,
                 connectorTypes,
@@ -769,7 +795,7 @@ public class MapActivity extends AppCompatActivity {
 
                 if (featureReceiver.status.equals("error")) {
                     Log.e(TAG, featureReceiver.statusDesc);
-                    Toast.makeText(ctx, "nothing found for current parameters", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, "Αποτυχία εφαρμογής φίλτρων.  Φορτώνονται όλα τα σημεία.", Toast.LENGTH_SHORT).show();
                     getPoints();
                     return;
                 }
@@ -810,10 +836,10 @@ public class MapActivity extends AppCompatActivity {
                     currentMarkerLocation = location;
                     Log.d("markerClick ", "touched marker");
                     if (!marker.isInfoWindowShown()) {
-                        //InfoWindow.closeAllInfoWindowsOn(map);
                         Map<String, Object> locRequestMap = new HashMap<>();
                         locRequestMap.put("location_id", location.openApiLocation.locationId);
                         locRequestMap.put("token", token.token);
+
                         Call<LocationSingleReceiver> locationInfoCall = chargePointApiService.getLocation(locRequestMap);
                         locationInfoCall.enqueue(new Callback<LocationSingleReceiver>() {
                             @Override
@@ -871,9 +897,14 @@ public class MapActivity extends AppCompatActivity {
                     feature.geometry.coordinates.get(1)
             );
 
+            if (mapLoading != null) {
+                mapLoading.dismiss();
+            }
+
             marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker, MapView map) {
+                    pinLoading.show();
                     currentMarkerCoordinates = feature.geometry.coordinates;
                     Log.d("markerClick ", "touched marker");
                     lastMarker = marker;
@@ -907,11 +938,13 @@ public class MapActivity extends AppCompatActivity {
                                     }
                                 }
                                 Log.e("markerInfoCall", "complete");
+                                pinLoading.dismiss();
                             }
 
                             @Override
                             public void onFailure(Call<LocationSingleReceiver> call, Throwable t) {
                                 Log.e("markerInfoCall", t.getMessage());
+                                pinLoading.dismiss();
                             }
                         });
                         return false;
@@ -1216,15 +1249,36 @@ public class MapActivity extends AppCompatActivity {
             ConnectorFormat = filterValue_plug;
         }
 
+        if (connectorFilterRestrictions.isEmpty()) {
+            connectorFilterRestrictions = null;
+        }
+        if (powerTypesFilterRestrictions.isEmpty()) {
+            powerTypesFilterRestrictions = null;
+        }
 
-        getPointsFiltered(
-                centerPointCoordinates,
-                maxNumberOfResponsePoints,
-                connectorFilterRestrictions,
-                powerTypesFilterRestrictions,
-                ConnectorFormat,
-                filterValue_status
-        );
+
+        if (filterValue_status == "NORESTRICTION") {
+            Log.d(TAG,"NOOO------------RESTRICTION");
+            getPointsFiltered(
+                    centerPointCoordinates,
+                    maxNumberOfResponsePoints,
+                    connectorFilterRestrictions,
+                    powerTypesFilterRestrictions,
+                    ConnectorFormat,
+                    ""
+            );
+        } else {
+            getPointsFiltered(
+                    centerPointCoordinates,
+                    maxNumberOfResponsePoints,
+                    connectorFilterRestrictions,
+                    powerTypesFilterRestrictions,
+                    ConnectorFormat,
+                    filterValue_status
+            );
+        }
+
+
     }
 
     private void applyFilters() {

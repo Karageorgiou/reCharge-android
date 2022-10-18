@@ -53,11 +53,21 @@ dependencies {
 
 
     // Material Design
-    api 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'com.google.android.material:material:1.6.1'
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.14.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.1'
+
+    // Lottie Animation Library
+    def lottieVersion = "3.4.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+
+    // Material Dialog Library
+    implementation 'dev.shreyaspatil.MaterialDialog:MaterialDialog:2.2.3'
+
+    // Material Design Library
+    implementation 'com.google.android.material:material:1.0.0'
 
 
 }
