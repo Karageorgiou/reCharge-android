@@ -904,7 +904,10 @@ public class MapActivity extends AppCompatActivity {
             marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker, MapView map) {
-                    pinLoading.show();
+                    if(marker.isInfoWindowShown()){
+                        pinLoading.show();
+                    }
+
                     currentMarkerCoordinates = feature.geometry.coordinates;
                     Log.d("markerClick ", "touched marker");
                     lastMarker = marker;
@@ -950,6 +953,9 @@ public class MapActivity extends AppCompatActivity {
                         return false;
                     } else {
                         marker.closeInfoWindow();
+                        if (pinLoading!=null){
+                        pinLoading.dismiss();
+                        }
                         return true;
                     }
                 }
@@ -1257,7 +1263,7 @@ public class MapActivity extends AppCompatActivity {
         }
 
 
-        if (filterValue_status == "NORESTRICTION") {
+        if (filterValue_status.equals("NORESTRICTION")) {
             Log.d(TAG,"NOOO------------RESTRICTION");
             getPointsFiltered(
                     centerPointCoordinates,
