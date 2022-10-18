@@ -5,5 +5,5 @@
     <string name="title_activity_filter">FilterActivity</string>
     <string name="title_activity_filters">FiltersActivity</string>
 
-    <string name="copyright">© OpenStreetMap <a href="https://www.openstreetmap.org/copyright">contributors</a></string>
+    <string name="copyright"> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> contributors </string>
 </resources>

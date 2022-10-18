@@ -94,8 +94,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MapActivity extends AppCompatActivity {
     private String TAG = "MapActivity ";
 
-
-
+    CustomCopyrightOverlay copyrightOverlay;
+    TextView copyr;
     Context ctx;
     ChargePointLocation currLocation;
     Location lastUserLocation;
@@ -207,7 +207,6 @@ public class MapActivity extends AppCompatActivity {
     public TextView tv_lat;
 
 
-
     public View info;
     public TextView iw_type;
     public TextView iw_address;
@@ -272,6 +271,10 @@ public class MapActivity extends AppCompatActivity {
 
         mapController.setCenter(new GeoPoint(37.9838, 23.7275));
         mapController.setZoom(10d);
+        // ATTENTION: This was auto-generated to handle app links.
+        /*Intent appLinkIntent = getIntent();
+        String appLinkAction = appLinkIntent.getAction();
+        Uri appLinkData = appLinkIntent.getData();*/
     }
 
     @Override
@@ -293,6 +296,23 @@ public class MapActivity extends AppCompatActivity {
         Configuration.getInstance().load(this, prefs);
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
     }
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        String appLinkAction = intent.getAction();
+        Uri appLinkData = intent.getData();
+        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
+            String recipeId = appLinkData.getLastPathSegment();
+            Uri appData = Uri.parse("https://www.openstreetmap.org/copyright").buildUpon()
+                    .appendPath(recipeId).build();
+
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -500,12 +520,22 @@ public class MapActivity extends AppCompatActivity {
             }
         });
 
-        CustomCopyrightOverlay copyrightOverlay = new CustomCopyrightOverlay(ctx);
-        copyrightOverlay.setAlignRight(true);
-        copyrightOverlay.setCopyrightNotice(getResources().getString(R.string.copyright));
 
-        copyrightOverlay.setOffset(displayMetrics.widthPixels / 50, displayMetrics.heightPixels - (displayMetrics.heightPixels / 13));
-        map.getOverlays().add(copyrightOverlay);
+        copyr = findViewById(R.id.tv_copy);
+        copyr.setText(R.string.copyright);
+        copyr.setClickable(true);
+        copyr.setFocusable(true);
+        copyr.setAlpha(1);
+        copyr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"clicked copyright notice");
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.openstreetmap.org/copyright"));
+                browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                ctx.startActivity(browserIntent);
+            }
+        });
 
     }
 
@@ -926,7 +956,7 @@ public class MapActivity extends AppCompatActivity {
         Drawable pin_selected = ResourcesCompat.getDrawable(getResources(), R.mipmap.ic_pin_selected_foreground, null);
 
 
-        InfoWindow infoWindow = new InfoWindow(R.layout.info_window_layout,map) {
+        InfoWindow infoWindow = new InfoWindow(R.layout.info_window_layout, map) {
 
             @Override
             public void onOpen(Object item) {
@@ -953,59 +983,58 @@ public class MapActivity extends AppCompatActivity {
                 }
                 //infoWindow.setRelatedObject(R.layout.info_window_layout);
                 //target = values.toArray(new String[values.size()]);
-                target=values.toString();
+                target = values.toString();
 
 
-                    // split the string by spaces in a
-                    String a[] = target.split(" ");
+                // split the string by spaces in a
+                String a[] = target.split(" ");
 
-                    String T1 = "IEC_62196_T1";
-                    String T2 = "IEC_62196_T2";
-                    String T1C = "IEC_62196_T1_COMBO";
-                    String T2C = "IEC_62196_T2_COMBO";
-                    String CHAD = "CHADEMO";
-                    String DOM = "DOMESTIC_F";
+                String T1 = "IEC_62196_T1";
+                String T2 = "IEC_62196_T2";
+                String T1C = "IEC_62196_T1_COMBO";
+                String T2C = "IEC_62196_T2_COMBO";
+                String CHAD = "CHADEMO";
+                String DOM = "DOMESTIC_F";
 
 
-                    // search for pattern in a
-                    int T1count = 0,T2count = 0,T1Ccount = 0,T2Ccount = 0,CHADcount = 0,DOMcount = 0;
-                    for (int i = 0; i < a.length; i++)
-                    {
-                        // if match found increase count
-                        if (T1.equals(a[i])){
-                            T1count++;
-                        }else if (T2.equals(a[i])){
-                            T2count++;
-                        }else if (T1C.equals(a[i])){
-                            T1Ccount++;
-                        }else if (T2C.equals(a[i])){
-                            T2Ccount++;
-                        }else if (CHAD.equals(a[i])){
-                            CHADcount++;
-                        }else if (DOM.equals(a[i])){
-                            DOMcount++;
-                        }
+                // search for pattern in a
+                int T1count = 0, T2count = 0, T1Ccount = 0, T2Ccount = 0, CHADcount = 0, DOMcount = 0;
+                for (int i = 0; i < a.length; i++) {
+                    // if match found increase count
+                    if (T1.equals(a[i])) {
+                        T1count++;
+                    } else if (T2.equals(a[i])) {
+                        T2count++;
+                    } else if (T1C.equals(a[i])) {
+                        T1Ccount++;
+                    } else if (T2C.equals(a[i])) {
+                        T2Ccount++;
+                    } else if (CHAD.equals(a[i])) {
+                        CHADcount++;
+                    } else if (DOM.equals(a[i])) {
+                        DOMcount++;
                     }
+                }
 
                 String types = "|";
-                    if(T1count>0){
-                        types=types+T1count+"x Type 1"+" | ";
-                    }
-                    if(T2count>0){
-                        types=types+T2count+"x Type 2"+" | ";
-                    }
-                    if(T1Ccount>0){
-                        types=types+T1Ccount+"x Type 1 Combo"+" | ";
-                    }
-                    if(T2Ccount>0){
-                        types=types+T2Ccount+"x Type 2 Combo"+" | ";
-                    }
-                    if(CHADcount>0){
-                        types=types+CHADcount+"x Chademo"+" | ";
-                    }
-                    if(DOMcount>0){
-                        types=types+DOMcount+"x Domestic"+" | ";
-                    }
+                if (T1count > 0) {
+                    types = types + T1count + "x Type 1" + " | ";
+                }
+                if (T2count > 0) {
+                    types = types + T2count + "x Type 2" + " | ";
+                }
+                if (T1Ccount > 0) {
+                    types = types + T1Ccount + "x Type 1 Combo" + " | ";
+                }
+                if (T2Ccount > 0) {
+                    types = types + T2Ccount + "x Type 2 Combo" + " | ";
+                }
+                if (CHADcount > 0) {
+                    types = types + CHADcount + "x Chademo" + " | ";
+                }
+                if (DOMcount > 0) {
+                    types = types + DOMcount + "x Domestic" + " | ";
+                }
 
 
                 iw_type.setText(types);
@@ -1013,8 +1042,7 @@ public class MapActivity extends AppCompatActivity {
                 iw_status.setText(currLocation.evses.get(0).status);
 
 
-
-                Log.i(TAG, "Info Window Open: "+ item.getClass().toString());
+                Log.i(TAG, "Info Window Open: " + item.getClass().toString());
                 marker.setIcon(pin_selected);
             }
 

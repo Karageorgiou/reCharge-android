@@ -11,38 +11,11 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
-    <!--<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/linear2"
-        android:weightSum="100"
-        android:orientation="vertical">
-
-
-        <org.osmdroid.views.MapView
-            android:layout_weight="80"
-            android:id="@+id/mapView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="20">
-
-
-        </RelativeLayout>
-
-    </LinearLayout>-->
-
     <org.osmdroid.views.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="0dp" />
-
-
-
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -50,9 +23,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/mapView">
 
         <include layout="@layout/bottom_sheet_layout" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <TextView
+        android:id="@+id/tv_copy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/copyright"
+        android:textColor="@color/black"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_filter"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="35dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_filter"
