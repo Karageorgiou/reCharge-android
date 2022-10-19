@@ -8,15 +8,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseViewHolder> {
 
+    String TAG = "EvseItemAdapter";
     // An object of RecyclerView.RecycledViewPool
     // is created to share the Views
     // between the child and
@@ -76,6 +83,11 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
             evseViewHolder.reservable.setText("N/A");
         }
 
+        String dateNtime = evseItem.lastUpdated.toLowerCase(Locale.ROOT).replace("t"," ");
+        String newDate = getNewDate(dateNtime);
+        Log.i(TAG,newDate);
+        evseViewHolder.last_update.setText(newDate);
+
 
         // Create a layout manager
         // to assign a layout
@@ -131,6 +143,27 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
 
     }
 
+    public String getNewDate(String dateAndTime){
+
+        SimpleDateFormat oldFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        oldFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        String dueDateAsNormal ="";
+        try {
+            value = oldFormatter.parse(dateAndTime);
+            SimpleDateFormat newFormatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss ");
+
+            newFormatter.setTimeZone(TimeZone.getDefault());
+            dueDateAsNormal = newFormatter.format(value);
+        } catch (ParseException e) {
+            Log.e(TAG,e.getMessage());
+            e.printStackTrace();
+        }
+
+        return dueDateAsNormal;
+    }
+
+
     // This class is to initialize
     // the Views present in
     // the parent RecyclerView
@@ -142,6 +175,7 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
         private TextView evse_id;
         private TextView status;
         private TextView reservable;
+        private TextView last_update;
 
 
         EvseViewHolder(final View itemView) {
@@ -151,6 +185,7 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
             evse_id = itemView.findViewById(R.id.evse_evse_id);
             status = itemView.findViewById(R.id.evse_status);
             reservable = itemView.findViewById(R.id.evse_reservation);
+            last_update = itemView.findViewById(R.id.evse_last_updated_date);
 
 
         }

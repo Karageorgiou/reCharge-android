@@ -96,6 +96,7 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
         //String time = " ";
 
         connectorViewHolder.last_update_date.setText(newDate);
+        connectorViewHolder.last_update_date.setVisibility(View.INVISIBLE);
         //connectorViewHolder.last_update_time.setText(time);
 
     }

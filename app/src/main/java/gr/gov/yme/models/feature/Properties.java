@@ -14,6 +14,9 @@ public class Properties {
     @SerializedName("Provider")
     @Expose
     public String provider;
+    @SerializedName("LocationName")
+    @Expose
+    public String locationName;
     @SerializedName("Forecolor")
     @Expose
     public String forecolor;

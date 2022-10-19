@@ -2,10 +2,12 @@ package gr.gov.yme.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -47,6 +49,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.clustering.MarkerClusterer;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -72,7 +75,7 @@ import gr.gov.yme.R;
 import gr.gov.yme.models.feature.Feature;
 import gr.gov.yme.models.location.Image;
 import gr.gov.yme.network.receivers.FeatureReceiver;
-import gr.gov.yme.util.CustomCopyrightOverlay;
+import gr.gov.yme.sqlite.CustomSQLiteHelper;
 import gr.gov.yme.util.EvseItemAdapter;
 import gr.gov.yme.util.ImageAdapter;
 import gr.gov.yme.util.WrapContentLinearLayoutManager;
@@ -93,64 +96,38 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapActivity extends AppCompatActivity {
     private String TAG = "MapActivity ";
-
-    BodyWithFilters bodyWithFilters;
-    TextView copyr;
-    MaterialDialog pinLoading;
-    MaterialDialog mapLoading;
     Context ctx;
+
     ChargePointLocation currLocation;
+    ChargePointLocation currentMarkerLocation;
     Location lastUserLocation;
-
     Marker lastMarker;
-
+    private List<Double> currentMarkerCoordinates;
     boolean isFirstTime;
 
-    RadiusMarkerClusterer markerClusterer;
-
-
+    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 44;
     /********************** Network Variables **********************/
     final String TOKEN_URL = "http://dev.e-research.gr/myfah/openApi/";
     final String BASE_URL = "https://electrokinisi.yme.gov.gr/myfah-api/openApi/";
-
+    //Client Variables
     OkHttpClient authorizationClient;
-
+    BodyWithFilters bodyWithFilters;
+    //Token Retrofit
     Retrofit tokenRetrofit;
     ChargePointApiService tokenChargePointApiService;
     Call<TokenReceiver> getTokenCall;
     Call<TokenReceiver> getGetTokenWithFiltersCall;
-
-    /*Retrofit locationsRetrofit;
-    ChargePointApiService locationsChargePointApiService;
-    Call<LocationsReceiver> getLocationsCall;
-
-    Retrofit filteredLocationsRetrofit;
-    ChargePointApiService filteredLocationsChargePointApiService;
-    Call<LocationsReceiver> getLocationsFilteredCall;*/
-
-
+    //Locations Retrofit
     Retrofit locationsRetrofit;
     ChargePointApiService locationsChargePointApiService;
     Call<FeatureReceiver> getLocationsCall;
-
+    //Filters Retrofit
     Retrofit filteredLocationsRetrofit;
     ChargePointApiService filteredLocationsChargePointApiService;
     Call<FeatureReceiver> getLocationsFilteredCall;
-
-
+    //Network Credentials
     private String USERNAME = "user1234";
     private String PASSWORD = "2372a5d0-e2c4-4a66-a102-719f7843e57b";
-
-    Callback tokenCall;
-/////////////////////////////////////////////////////////////////
-
-
-    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 44;
-
-    private BottomSheetBehavior bottomSheetBehavior;
-    private View bottomSheet;
-
-
     /********************** Filters Variables **********************/
     public static final String type1_Key = "key_type1";
     public static final String type2_Key = "key_type2";
@@ -161,8 +138,6 @@ public class MapActivity extends AppCompatActivity {
     public static final String tesla_Key = "key_tesla";
     public static final String plug_Key = "key_plug";
     public static final String status_Key = "key_status";
-
-
     boolean filterValue_type1;
     boolean filterValue_type2;
     boolean filterValue_type1ccs;
@@ -170,93 +145,69 @@ public class MapActivity extends AppCompatActivity {
     boolean filterValue_chademo;
     boolean filterValue_schuko;
     boolean filterValue_tesla;
-
     public static final String dc_Key = "key_dc";
     public static final String ac1_Key = "key_ac1";
     public static final String ac2_Key = "key_ac2";
     public static final String ac2split_Key = "key_ac2split";
     public static final String ac3_Key = "key_ac3";
-
     boolean filterValue_dc;
     boolean filterValue_ac1;
     boolean filterValue_ac2;
     boolean filterValue_ac2split;
     boolean filterValue_ac3;
-
-    public static final String socket_Key = "key_socket";
-    public static final String cable_Key = "key_cable";
-
     boolean filterValue_socket;
     boolean filterValue_cable;
     String filterValue_plug;
     String filterValue_status;
-
-
-/////////////////////////////////////////////////////////////////
-
-
+    /***************************************************************/
     WrapContentLinearLayoutManager layoutManager1;
     WrapContentLinearLayoutManager layoutManager2;
-
+    public View bottomSheet;
     public Toolbar toolbar;
     public TextView tv_title;
     public TextView tv_address_full;
-    public TextView tv_id;
     public TextView tv_address;
     public TextView tv_postal;
-    //private TextView tv_city;
     public TextView tv_country;
     public TextView tv_long;
     public TextView tv_lat;
-
-
-    public View info;
     public TextView iw_type;
     public TextView iw_address;
     public TextView iw_status;
-
-
+    public TextView copyrightNoticeOSM;
     public ImageView ic_drag;
-
-    ConstraintLayout constraintLayout;
-
-    RecyclerView parentRecyclerViewItem;
-    RecyclerView imagesRecyclerViewItem;
-
+    public RecyclerView parentRecyclerViewItem;
+    public RecyclerView imagesRecyclerViewItem;
     public List<Evse> evseList = new ArrayList<>();
     public EvseItemAdapter evseItemAdapter;
-
     public List<Image> imageList = new ArrayList<>();
     public ImageAdapter imageAdapter;
-
-
-    MapView map = null;
-
     public FloatingActionButton gps_button;
     public FloatingActionButton navigate_button;
     public FloatingActionButton navigate_button1;
     public FloatingActionButton filter_button;
-
+    MapView map = null;
+    ConstraintLayout constraintLayout;
     ConstraintLayout info_layout;
     RelativeLayout sheet_top;
-
+    MaterialDialog pinLoading;
+    MaterialDialog mapLoading;
+    //Controllers
+    BottomSheetBehavior bottomSheetBehavior;
     IMapController mapController;
-    FusedLocationProviderClient mFusedLocationClient;
-
-    //map overlays
+    RadiusMarkerClusterer markerClusterer;
+    //Map Overlays
     MyLocationNewOverlay myLocationNewOverlay;
     RotationGestureOverlay rotationGestureOverlay;
     ScaleBarOverlay scaleBarOverlay;
+    //Database
+    //SQLiteDatabase database = new CustomSQLiteHelper(this).getReadableDatabase();
 
-    List<ChargePointLocation> locationsList;
+    //Other
+    FusedLocationProviderClient mFusedLocationClient;
     List<Feature> featureList;
     Token token;
     Token newToken;
-
-
-    private ChargePointLocation currentMarkerLocation;
-    private List<Double> currentMarkerCoordinates;
-    SharedPreferences sharedpreferences;
 
     /******************* Inherited Methods *******************/
     @Override
@@ -265,13 +216,9 @@ public class MapActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate: running");
         ctx = getApplicationContext();
         setContentView(R.layout.activity_map);
-
-
         findViews();
         runInitMethods();
         isFirstTime = true;
-
-
         mapController.setCenter(new GeoPoint(37.9838, 23.7275));
         mapController.setZoom(10d);
         // ATTENTION: This was auto-generated to handle app links.
@@ -300,36 +247,15 @@ public class MapActivity extends AppCompatActivity {
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
     }
 
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        String appLinkAction = intent.getAction();
-        Uri appLinkData = intent.getData();
-        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
-            String recipeId = appLinkData.getLastPathSegment();
-            Uri appData = Uri.parse("https://www.openstreetmap.org/copyright").buildUpon()
-                    .appendPath(recipeId).build();
-
-        }
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         Log.d(TAG, String.valueOf(resultCode) + String.valueOf(requestCode));
-
-
         if (data != null) {
             String activityResult = data.getStringExtra("FROM_ACTIVITY");
             if (activityResult == null) {
                 Log.d(TAG, "previousActivity: NULL");
                 getToken();
-
             } else if (activityResult.equals("FILTERS")) {
                 Log.d(TAG, "previousActivity: FILTERS");
                 getTokenWithFilters();
@@ -341,10 +267,7 @@ public class MapActivity extends AppCompatActivity {
             Log.d(TAG, "previousActivity: ELSE2");
             getTokenWithFilters();
         }
-
-
     }
-
 
     @Override
     public void onPause() {
@@ -387,6 +310,17 @@ public class MapActivity extends AppCompatActivity {
     }
 
     /******************* ------------------ *******************/
+    private void saveLocationToDB(SQLiteDatabase database, String loc_id, String loc_title, String loc_adrress, Double loc_lat, Double loc_long) {
+        ContentValues values = new ContentValues();
+        values.put(CustomSQLiteHelper.LOCATION_COLUMN_ID, loc_id);
+        values.put(CustomSQLiteHelper.LOCATION_COLUMN_TITLE, loc_title);
+        values.put(CustomSQLiteHelper.LOCATION_COLUMN_ADRRESS, loc_adrress);
+        values.put(CustomSQLiteHelper.LOCATION_COLUMN_LAT, loc_lat);
+        values.put(CustomSQLiteHelper.LOCATION_COLUMN_LONG, loc_long);
+        long newRowId = database.insert(CustomSQLiteHelper.LOCATION_TABLE_NAME, null, values);
+
+        Log.i(TAG, "Database added location with id: " + newRowId);
+    }
 
     private void findViews() {
         toolbar = findViewById(R.id.toolbar);
@@ -434,7 +368,6 @@ public class MapActivity extends AppCompatActivity {
         requestPermissions();
         init_map();
         getToken();
-
         initBottomSheet();
         initToolbar();
         initRecyclerViews();
@@ -533,12 +466,12 @@ public class MapActivity extends AppCompatActivity {
             }
         });
 
-        copyr = findViewById(R.id.tv_copy);
-        copyr.setText(R.string.copyright);
-        copyr.setClickable(true);
-        copyr.setFocusable(true);
-        copyr.setAlpha(1);
-        copyr.setOnClickListener(new View.OnClickListener() {
+        copyrightNoticeOSM = findViewById(R.id.tv_copy);
+        copyrightNoticeOSM.setText(R.string.copyright);
+        copyrightNoticeOSM.setClickable(true);
+        copyrightNoticeOSM.setFocusable(true);
+        copyrightNoticeOSM.setAlpha(1);
+        copyrightNoticeOSM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "clicked copyright notice");
@@ -890,24 +823,29 @@ public class MapActivity extends AppCompatActivity {
         //markerClusterer.setMaxClusteringZoomLevel(15);
         markerClusterer.setRadius(200);
         map.getOverlays().add(markerClusterer);
-
+        SQLiteDatabase database = new CustomSQLiteHelper(this).getReadableDatabase();
+        //database.delete("location","*",null);
+        database.execSQL("delete from " + "location");
         features.forEach(feature -> {
             Marker marker = createMarker(
                     feature.geometry.coordinates.get(0),
                     feature.geometry.coordinates.get(1)
             );
-
+            saveLocationToDB(database,
+                    feature.properties.locationId,
+                    feature.properties.locationName,
+                    feature.properties.locationName,
+                    feature.geometry.coordinates.get(0),
+                    feature.geometry.coordinates.get(1));
             if (mapLoading != null) {
                 mapLoading.dismiss();
             }
 
+
             marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker, MapView map) {
-                    if(marker.isInfoWindowShown()){
-                        pinLoading.show();
-                    }
-
+                    pinLoading.show();
                     currentMarkerCoordinates = feature.geometry.coordinates;
                     Log.d("markerClick ", "touched marker");
                     lastMarker = marker;
@@ -953,8 +891,8 @@ public class MapActivity extends AppCompatActivity {
                         return false;
                     } else {
                         marker.closeInfoWindow();
-                        if (pinLoading!=null){
-                        pinLoading.dismiss();
+                        if (pinLoading != null) {
+                            pinLoading.dismiss();
                         }
                         return true;
                     }
@@ -984,7 +922,7 @@ public class MapActivity extends AppCompatActivity {
     private void removeMarkers() {
         InfoWindow.closeAllInfoWindowsOn(map);
         map.getOverlays().forEach(overlay -> {
-            if (overlay instanceof Marker) {
+            if ((overlay instanceof Marker) || (overlay instanceof RadiusMarkerClusterer)) {
                 map.getOverlays().remove(overlay);
             }
         });
@@ -1020,8 +958,6 @@ public class MapActivity extends AppCompatActivity {
                         values.add(data);
                     }
                 }
-                //infoWindow.setRelatedObject(R.layout.info_window_layout);
-                //target = values.toArray(new String[values.size()]);
                 target = values.toString();
 
 
@@ -1101,13 +1037,6 @@ public class MapActivity extends AppCompatActivity {
 
 
     private void updateBottomSheetInfo(ChargePointLocation location) {
-
-
-
-
-        /*float distance = Location.distanceBetween(location.coordinates.latitude,
-                location.coordinates.longitude,
-                );*/
         tv_title.setText(location.name);
         tv_address_full.setText(location.address + " , " + location.city + " , " + location.postalCode);
         tv_country.setText(location.country);
@@ -1123,7 +1052,6 @@ public class MapActivity extends AppCompatActivity {
         }
 
         imageList.clear();
-        //imagesRecyclerViewItem.getLayoutParams().height = 0;
         ViewGroup.LayoutParams params = imagesRecyclerViewItem.getLayoutParams();
         params.height = 0;
         imagesRecyclerViewItem.setLayoutParams(params);
@@ -1264,7 +1192,7 @@ public class MapActivity extends AppCompatActivity {
 
 
         if (filterValue_status.equals("NORESTRICTION")) {
-            Log.d(TAG,"NOOO------------RESTRICTION");
+            Log.d(TAG, "NOOO------------RESTRICTION");
             getPointsFiltered(
                     centerPointCoordinates,
                     maxNumberOfResponsePoints,
