@@ -18,6 +18,21 @@
         <!--<item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>-->
     </style>
 
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background, animated icon, and animation duration. -->
+        <item name="windowSplashScreenBackground">@raw/three_dots_loading</item>
+
+        <!-- Use windowSplashScreenAnimatedIcon to add either a drawable or an
+             animated drawable. One of these is required. -->
+        <item name="windowSplashScreenAnimatedIcon">@raw/bucket_loading</item>
+        <!-- Required for animated icons -->
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+
+        <!-- Set the theme of the Activity that directly follows your splash screen. -->
+        <!-- Required -->
+        <item name="postSplashScreenTheme">@style/Theme.Electrokinisi</item>
+    </style>
+
     <style name="SquareFloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
         <item name="shapeAppearanceOverlay">
             @style/FabShapeStyle1
@@ -35,17 +50,5 @@
     <style name="ConnectorInfoFont" parent="MaterialAlertDialog.Material3.Body.Text">
         <item name="android:textSize">12sp</item>
     </style>
-
-
-
-    <!--<style name="PreferenceTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="android:background">#38414C</item>
-    </style>-->
-
-
-
-
-
 
 </resources>

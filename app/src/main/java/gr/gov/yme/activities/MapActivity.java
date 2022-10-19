@@ -68,6 +68,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.shreyaspatil.MaterialDialog.MaterialDialog;
@@ -111,6 +112,7 @@ public class MapActivity extends AppCompatActivity {
     final String BASE_URL = "https://electrokinisi.yme.gov.gr/myfah-api/openApi/";
     //Client Variables
     OkHttpClient authorizationClient;
+    OkHttpClient locationsClient;
     BodyWithFilters bodyWithFilters;
     //Token Retrofit
     Retrofit tokenRetrofit;
@@ -389,6 +391,8 @@ public class MapActivity extends AppCompatActivity {
         // TOKEN CLIENT
         authorizationClient = new OkHttpClient.Builder()
                 .addInterceptor(new BasicAuthInterceptor(USERNAME, PASSWORD))
+                .connectTimeout(1,TimeUnit.MINUTES)
+                .readTimeout(1,TimeUnit.MINUTES)
                 .build();
         tokenRetrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
@@ -399,8 +403,13 @@ public class MapActivity extends AppCompatActivity {
 
 
         //LOCATIONS CLIENT
+        locationsClient = new OkHttpClient.Builder()
+                .connectTimeout(1,TimeUnit.MINUTES)
+                .readTimeout(1,TimeUnit.MINUTES)
+                .build();
         locationsRetrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(locationsClient)
                 .baseUrl(BASE_URL)
                 .build();
         locationsChargePointApiService = locationsRetrofit.create(ChargePointApiService.class);
@@ -408,6 +417,7 @@ public class MapActivity extends AppCompatActivity {
         filteredLocationsRetrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
+                .client(locationsClient)
                 .build();
         filteredLocationsChargePointApiService = filteredLocationsRetrofit.create(ChargePointApiService.class);
     }
@@ -640,6 +650,9 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<TokenReceiver> call, Throwable t) {
                 Log.e("TOKEN CALL FAILURE: ", t.getMessage());
+                if(mapLoading!=null){
+                    mapLoading.dismiss();
+                }
             }
 
         });
@@ -665,6 +678,9 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<TokenReceiver> call, Throwable t) {
                 Log.e("TOKEN CALL FAILURE: ", t.getMessage());
+                if(mapLoading!=null){
+                    mapLoading.dismiss();
+                }
             }
 
         });
@@ -696,6 +712,9 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<FeatureReceiver> call, Throwable t) {
                 Log.e(TAG + " getPoints", t.getMessage());
+                if(mapLoading!=null){
+                    mapLoading.dismiss();
+                }
             }
         });
     }
@@ -742,11 +761,17 @@ public class MapActivity extends AppCompatActivity {
                 Toast.makeText(ctx, "Found " + featureList.size() + " points", Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Found " + featureList.size() + " points");
                 setFeaturesOnMap(featureList, locationsChargePointApiService, token);
+                if(mapLoading!=null){
+                    mapLoading.dismiss();
+                }
             }
 
             @Override
             public void onFailure(Call<FeatureReceiver> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
+                if(mapLoading!=null){
+                    mapLoading.dismiss();
+                }
             }
         });
     }
@@ -837,9 +862,6 @@ public class MapActivity extends AppCompatActivity {
                     feature.properties.locationName,
                     feature.geometry.coordinates.get(0),
                     feature.geometry.coordinates.get(1));
-            if (mapLoading != null) {
-                mapLoading.dismiss();
-            }
 
 
             marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
@@ -862,7 +884,6 @@ public class MapActivity extends AppCompatActivity {
                                     assert location != null;
                                     Log.e("status", location.status);
                                     Log.e("statusDesc", location.statusDesc);
-                                    //Toast.makeText(ctx, "statusDesc: " + location.statusDesc, Toast.LENGTH_SHORT).show();
                                     if (null != location.loc) {
                                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                         currLocation = location.loc;
@@ -913,9 +934,8 @@ public class MapActivity extends AppCompatActivity {
         marker.setIcon(pin);
         marker.setTextLabelFontSize(44);
         marker.setId(latitude.toString() + longitude.toString());
-        // map.getOverlays().add(marker);
+        //todo
         markerClusterer.add(marker);
-
         return marker;
     }
 

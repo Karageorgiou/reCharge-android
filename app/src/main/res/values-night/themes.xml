@@ -18,6 +18,21 @@
         <!--<item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>-->
     </style>
 
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen.IconBackground">
+        <!-- Set the splash screen background, animated icon, and animation duration. -->
+        <item name="windowSplashScreenBackground">@color/blue</item>
+<!--        <item name="windowSplashScreenIconBackgroundColor">@drawable/gradient</item>-->
+
+        <!-- Use windowSplashScreenAnimatedIcon to add either a drawable or an
+             animated drawable. One of these is required. -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_anim</item>
+        <!--<item name="windowSplashScreenAnimationDuration">5000</item>-->
+
+        <!-- Set the theme of the Activity that directly follows your splash screen. -->
+        <!-- Required -->
+        <item name="postSplashScreenTheme">@style/Theme.Electrokinisi</item>
+    </style>
+
     <style name="SquareFloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
         <item name="shapeAppearanceOverlay">
             @style/FabShapeStyle1
