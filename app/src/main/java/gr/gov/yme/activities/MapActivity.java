@@ -448,7 +448,7 @@ public class MapActivity extends AppCompatActivity {
 
         //rotation gestures
         rotationGestureOverlay = new RotationGestureOverlay(map);
-        rotationGestureOverlay.setEnabled(true);
+        rotationGestureOverlay.setEnabled(false);
 
         map.setMultiTouchControls(true);
         map.setVerticalMapRepetitionEnabled(false);
@@ -534,6 +534,13 @@ public class MapActivity extends AppCompatActivity {
                     filter_button.setClickable(true);
                     gps_button.setAlpha(0f);
                     gps_button.setClickable(false);
+                } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    navigate_button.setAlpha(1f);
+                    navigate_button.setClickable(true);
+                    gps_button.setAlpha(1f);
+                    gps_button.setClickable(true);
+                    filter_button.setAlpha(1f);
+                    filter_button.setClickable(true);
                 }
                 //TODO use drag icons on top of each other and change alpha respectively
             }
@@ -554,9 +561,11 @@ public class MapActivity extends AppCompatActivity {
 
     private void initRecyclerViews() {
         layoutManager1 = new WrapContentLinearLayoutManager(MapActivity.this, WrapContentLinearLayoutManager.HORIZONTAL, false);
-        evseItemAdapter = new EvseItemAdapter(evseList);
+        evseItemAdapter = new EvseItemAdapter(ctx,evseList);
         parentRecyclerViewItem.setAdapter(evseItemAdapter);
         parentRecyclerViewItem.setLayoutManager(layoutManager1);
+        parentRecyclerViewItem.setNestedScrollingEnabled(false);
+
 
         layoutManager2 = new WrapContentLinearLayoutManager(MapActivity.this, WrapContentLinearLayoutManager.HORIZONTAL, false);
         imageAdapter = new ImageAdapter(imageList);
@@ -952,7 +961,7 @@ public class MapActivity extends AppCompatActivity {
         Drawable pin = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_pin_foreground, null);
         Drawable pin_selected = ResourcesCompat.getDrawable(getResources(), R.mipmap.ic_pin_selected_foreground, null);
 
-
+/*
         InfoWindow infoWindow = new InfoWindow(R.layout.info_window_layout, map) {
 
             @Override
@@ -991,8 +1000,6 @@ public class MapActivity extends AppCompatActivity {
                 String CHAD = "CHADEMO";
                 String DOM = "DOMESTIC_F";
 
-
-                // search for pattern in a
                 int T1count = 0, T2count = 0, T1Ccount = 0, T2Ccount = 0, CHADcount = 0, DOMcount = 0;
                 for (int i = 0; i < a.length; i++) {
                     // if match found increase count
@@ -1051,6 +1058,29 @@ public class MapActivity extends AppCompatActivity {
             }
         };
         marker.setInfoWindow(infoWindow);
+        */
+
+        InfoWindow infoWindow = new InfoWindow(R.layout.info_window_layout_empty, map) {
+
+            @Override
+            public void onOpen(Object item) {
+                Log.i(TAG, "Info Window Open: " + item.getClass().toString());
+                marker.setIcon(pin_selected);
+            }
+
+
+            @Override
+            public void onClose() {
+                Log.i(TAG, "Info Window Closed");
+                marker.setIcon(pin);
+                bottomSheetBehavior.setHideable(true);
+                hideBottomSheet();
+            }
+        };
+        marker.setInfoWindow(infoWindow);
+
+
+
         bottomSheetBehavior.setHideable(false);
 
     }

@@ -65,6 +65,9 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
         } else if (connectorItem.standard.compareTo("IEC_62196_T1_COMBO") == 0) {
             connectorViewHolder.type.setText("Type 1 Combo");
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_ccs_typ1);
+        } else if (connectorItem.standard.compareTo("IEC_62196_T2_COMBO") == 0) {
+            connectorViewHolder.type.setText("Type 2 Combo");
+            connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_css_typ2_black);
         } else if (connectorItem.standard.compareTo("CHADEMO") == 0) {
             connectorViewHolder.type.setText("Chademo");
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_chademo);

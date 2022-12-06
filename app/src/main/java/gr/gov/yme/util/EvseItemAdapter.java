@@ -5,9 +5,11 @@ import gr.gov.yme.R;
 import gr.gov.yme.models.location.Evse;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.util.Log;
@@ -20,6 +22,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseViewHolder> {
 
@@ -30,8 +33,10 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
     // the parent RecyclerViews
     private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     private List<Evse> evseItemList;
+    private Context context;
 
-    public EvseItemAdapter(List<Evse> evseItemList) {
+    public EvseItemAdapter(Context context, List<Evse> evseItemList) {
+        this.context = context;
         this.evseItemList = evseItemList;
     }
 
@@ -89,18 +94,10 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
         evseViewHolder.last_update.setText(newDate);
 
 
-        // Create a layout manager
-        // to assign a layout
-        // to the RecyclerView.
+        GridLayoutManager layoutManager = new GridLayoutManager(context, 1);
 
-        // Here we have assigned the layout
-        // as LinearLayout with vertical orientation
-        LinearLayoutManager layoutManager = new LinearLayoutManager(
-                evseViewHolder
-                        .ChildRecyclerView
-                        .getContext(),
-                LinearLayoutManager.VERTICAL,
-                false);
+
+        //LinearLayoutManager layoutManager = new LinearLayoutManager(evseViewHolder.ChildRecyclerView.getContext(),LinearLayoutManager.VERTICAL, false);
 
         // Since this is a nested layout, so
         // to define how many child items
@@ -120,17 +117,14 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
 
 
         evseViewHolder.ChildRecyclerView.setLayoutManager(layoutManager);
+        evseViewHolder.ChildRecyclerView.setHasFixedSize(true);
 
         evseViewHolder.ChildRecyclerView.setAdapter(connectorItemAdapter);
 
         evseViewHolder.ChildRecyclerView.setRecycledViewPool(viewPool);
     }
 
-    // This method returns the number
-    // of items we have added in the
-    // ParentItemList i.e. the number
-    // of instances we have created
-    // of the ParentItemList
+
     @Override
     public int getItemCount() {
 
@@ -164,9 +158,6 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
     }
 
 
-    // This class is to initialize
-    // the Views present in
-    // the parent RecyclerView
     class EvseViewHolder
             extends RecyclerView.ViewHolder {
 

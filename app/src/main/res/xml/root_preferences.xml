@@ -23,6 +23,8 @@
             app:key="key_type1css"
             app:title="CCS - Type 1 " />
         <SwitchPreferenceCompat
+            app:icon="@drawable/ic_connector_css_typ2_white"
+            android:tint="@color/white"
             app:key="key_type2css"
             app:title="CCS - Type 2" />
         <SwitchPreferenceCompat

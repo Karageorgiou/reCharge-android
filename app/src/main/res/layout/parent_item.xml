@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="3dp"
     android:layout_marginHorizontal="3dp"
+    android:layout_marginVertical="3dp"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
@@ -32,13 +32,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_marginBaseline="2dp">
+                app:layout_marginBaseline="2dp"
+               >
 
                 <TableRow
                     android:id="@+id/header_tabeli"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:layout_marginStart="2dp">
 
                     <TextView
                         android:id="@+id/tv_11"
@@ -70,7 +72,8 @@
                         android:gravity="start"
                         android:text="Κατάσταση: "
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_marginStart="2dp"/>
 
                     <TextView
                         android:id="@+id/evse_status"
@@ -91,7 +94,8 @@
                         android:gravity="start"
                         android:text="Δυνατότητα Κράτησης:  "
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_marginStart="2dp"/>
 
                     <TextView
                         android:id="@+id/evse_reservation"
@@ -129,19 +133,21 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/child_recyclerview"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scrollbarAlwaysDrawHorizontalTrack="true"
+                    android:layout_height="100dp"
                     android:scrollbarSize="5dp"
-                    android:scrollbars="horizontal"/>
+                    android:scrollbars="vertical"
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
+
             <LinearLayout
-                app:layout_constraintTop_toBottomOf="@id/linear5"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 android:id="@+id/linear6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linear5">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -149,6 +155,7 @@
                     android:text="Last Update :        "
                     android:textColor="#BBBBBB"
                     android:textSize="11sp" />
+
                 <TextView
                     android:id="@+id/evse_last_updated_date"
                     android:layout_width="wrap_content"
