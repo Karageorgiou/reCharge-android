@@ -6,7 +6,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "gr.gov.yme"
+        applicationId "gr.gov.yme.reCharge"
         minSdk 24
         targetSdk 32
         versionCode 1
