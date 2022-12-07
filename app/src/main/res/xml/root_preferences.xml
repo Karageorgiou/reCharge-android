@@ -61,22 +61,22 @@
 
     <PreferenceCategory app:title="Τύπος Υποδοχέα">
         <ListPreference
-            app:defaultValue="χωρίς περιορισμό"
             app:entries="@array/evse_plug_entries"
             app:entryValues="@array/evse_plug_values"
             app:key="key_plug"
             app:title="Επιλέξτε υποδοχέα"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            android:defaultValue="@string/initVal"/>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Κατάσταση Σημείου Φόρτισης">
         <ListPreference
-            app:defaultValue="χωρίς περιορισμό"
             app:entries="@array/evse_status_entries"
             app:entryValues="@array/evse_status_values"
             app:key="key_status"
             app:title="Επιλέξτε κατάσταση"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            android:defaultValue="@string/initVal"/>
     </PreferenceCategory>
 
     <PreferenceCategory>

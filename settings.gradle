@@ -8,5 +8,5 @@ dependencyResolutionManagement {
 }
 
 
-rootProject.name = "Electrokinisi"
+rootProject.name = "reCharge"
 include ':app'

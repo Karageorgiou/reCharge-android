@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +18,9 @@
         <activity
             android:name=".reCharge.activities.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.App.Starting">
+            android:theme="@style/Theme.App.Starting"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,11 +35,14 @@
             android:name=".reCharge.activities.FiltersActivity"
             android:exported="false"
             android:label="@string/title_activity_filters"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".reCharge.activities.MapActivity" />
         <activity
             android:name=".reCharge.activities.SplashActivity"
             android:exported="true"
             android:label="@string/title_activity_splash"
+            android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,6 +53,7 @@
         <activity
             android:name=".reCharge.activities.MapActivity"
             android:exported="true"
+            android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

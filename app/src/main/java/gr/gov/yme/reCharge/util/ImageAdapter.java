@@ -17,7 +17,7 @@ import java.util.List;
 
 import gr.gov.yme.R;
 import gr.gov.yme.reCharge.models.location.Image;
-import gr.gov.yme.util.GlideApp;
+import gr.gov.yme.reCharge.util.GlideApp;
 
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {

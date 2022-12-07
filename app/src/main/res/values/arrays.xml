@@ -7,7 +7,7 @@
         <item>Inoperative</item>
         <item>Out of order</item>
         <item>Reserved</item>
-        <item>Χωρίς περιορισμό</item>
+        <item>No Restriction</item>
     </string-array>
 
     <string-array name="evse_status_values">
@@ -20,6 +20,8 @@
         <item>NORESTRICTION</item>
     </string-array>
 
+    <string name="initVal">NORESTRICTION</string>
+
 
 
 
@@ -27,7 +29,7 @@
     <string-array name="evse_plug_entries">
         <item>Cable</item>
         <item>Socket</item>
-        <item>Χωρίς περιορισμό</item>
+        <item>No Restriction</item>
     </string-array>
 
     <string-array name="evse_plug_values">

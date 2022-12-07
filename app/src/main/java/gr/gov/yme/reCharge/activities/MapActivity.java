@@ -67,6 +67,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import dev.shreyaspatil.MaterialDialog.MaterialDialog;
@@ -1223,11 +1224,11 @@ public class MapActivity extends AppCompatActivity {
         String maxNumberOfResponsePoints = "";
 
         String ConnectorFormat = "";
-        if (filterValue_plug == "NORESTRICTION") {
+        if (Objects.equals(filterValue_plug, "NORESTRICTION")) {
             ConnectorFormat = "";
-        } else if (filterValue_plug == "SOCKET") {
+        } else if (Objects.equals(filterValue_plug, "SOCKET")) {
             ConnectorFormat = filterValue_plug;
-        } else if (filterValue_plug == "CABLE") {
+        } else if (Objects.equals(filterValue_plug, "CABLE")) {
             ConnectorFormat = filterValue_plug;
         }
 
