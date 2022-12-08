@@ -755,7 +755,7 @@ public class MapActivity extends AppCompatActivity {
 
                 if (featureReceiver.status.equals("error")) {
                     Log.e(TAG, featureReceiver.statusDesc);
-                    Toast.makeText(ctx, "Αποτυχία εφαρμογής φίλτρων.  Φορτώνονται όλα τα σημεία.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, "Δεν βρέθηκαν σημεία με αυτά τα χαρακτηριστικά.", Toast.LENGTH_SHORT).show();
                     getPoints();
                     return;
                 }
@@ -766,8 +766,8 @@ public class MapActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "getPointsFiltered: getLocationsDetails: Success");
 
-                Toast.makeText(ctx, "Found " + featureList.size() + " points", Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "Found " + featureList.size() + " points");
+                Toast.makeText(ctx, "Βρέθηκαν " + featureList.size() + " σημεία", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Βρέθηκαν " + featureList.size() + " σημεία");
                 setFeaturesOnMap(featureList, locationsChargePointApiService, token);
                 if(mapLoading!=null){
                     mapLoading.dismiss();
@@ -1306,7 +1306,7 @@ public class MapActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                Toast.makeText(this, "Please turn on" + " your location...  ", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Παρακαλώ επιτρέψτε την πρόσβαση στην τοποθεσία της συσκευής", Toast.LENGTH_LONG).show();
                 Intent getLocationPermission = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(getLocationPermission);
             }
