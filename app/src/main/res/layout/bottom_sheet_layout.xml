@@ -4,13 +4,14 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:nestedScrollingEnabled="true"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="120dp"
-    android:nestedScrollingEnabled="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:contentDescription="@string/btn_navigation"
         android:id="@+id/fab_locate"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -28,6 +29,7 @@
         app:rippleColor="@color/blue" />
 
     <RelativeLayout
+        android:contentDescription="@string/btn_open_info_sheet"
         android:id="@+id/bottom_sheet_top"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -40,13 +42,11 @@
             android:id="@+id/ic_drag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_drag_up"
-            android:layout_alignParentBottom="true"/>
+            android:src="@drawable/ic_drag_up" />
 
     </RelativeLayout>
-
-
 
 
     <include layout="@layout/info_layout" />

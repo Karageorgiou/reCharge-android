@@ -38,6 +38,33 @@
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+        <TextView
+            android:id="@+id/paroxos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/oceanwide_semibold"
+            android:maxHeight="30dp"
+            android:text="Πάροχος"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_provider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:text="ΔΕΗ Blue"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/paroxos" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -99,20 +126,42 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_3" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
+            <!--<androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/parent_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="2dp"
                 android:fadeScrollbars="false"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:scrollbars="horizontal"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constrainedHeight="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_max="420dp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider4" />-->
+
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 app:layout_constraintTop_toBottomOf="@id/divider4" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                app:layout_constraintTop_toBottomOf="@id/viewpager"
+                app:tabGravity="center"
+                app:tabIndicatorColor="@color/white"
+                app:tabIndicatorGravity="bottom"
+                app:tabMode="scrollable"
+                app:tabRippleColor="@color/light_blue"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="@color/light_blue"
+                app:tabUnboundedRipple="false" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/divider3"
@@ -122,11 +171,9 @@
                 app:dividerColor="@color/white"
                 app:dividerInsetEnd="10dp"
                 app:dividerInsetStart="10dp"
-                app:layout_constraintTop_toBottomOf="@id/parent_recyclerview" />
+                app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
-            <include
-                android:id="@+id/lay_location_info"
-                layout="@layout/location_info_layout" />
+            <include layout="@layout/location_info_layout" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

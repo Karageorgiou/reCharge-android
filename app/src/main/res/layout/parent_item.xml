@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginHorizontal="3dp"
     android:layout_marginVertical="3dp"
     android:orientation="vertical">
@@ -16,14 +16,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:paddingHorizontal="5dp">
+            android:layout_margin="5dp">
 
             <TableLayout
                 android:id="@+id/table2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/dark_blue_rounded"
+
                 android:gravity="center"
                 android:paddingHorizontal="1dp"
                 android:paddingVertical="1dp"
@@ -36,14 +35,12 @@
                >
 
                 <TableRow
-                    android:id="@+id/header_tabeli"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_marginStart="2dp">
 
                     <TextView
-                        android:id="@+id/tv_11"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_column="0"
@@ -57,7 +54,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
-                        android:gravity="center"
+                        android:gravity="start"
+                        android:textStyle="bold"
                         android:text="GR*GRC*E04153456"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
@@ -66,7 +64,6 @@
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/tv_12"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="start"
@@ -79,7 +76,8 @@
                         android:id="@+id/evse_status"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="start"
+                        android:textStyle="bold"
                         android:text="Διαθέσιμο"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
@@ -88,7 +86,6 @@
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/tv_13"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="start"
@@ -101,7 +98,8 @@
                         android:id="@+id/evse_reservation"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:gravity="start"
+                        android:textStyle="bold"
                         android:text="Ενεργή"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
@@ -133,14 +131,13 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/child_recyclerview"
                     android:layout_width="wrap_content"
-                    android:layout_height="100dp"
+                    android:layout_height="130dp"
                     android:scrollbarSize="5dp"
                     android:scrollbars="vertical"
                     android:layout_marginTop="8dp"/>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linear6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -153,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="2dp"
                     android:text="Last Update :        "
-                    android:textColor="#BBBBBB"
+                    android:textColor="#D7D7D7"
                     android:textSize="11sp" />
 
                 <TextView
@@ -162,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="2dp"
                     android:text="29-09-2021"
-                    android:textColor="#BBBBBB"
+                    android:textColor="#D7D7D7"
                     android:textSize="11sp" />
             </LinearLayout>
 
