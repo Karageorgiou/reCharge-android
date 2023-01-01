@@ -9,7 +9,6 @@
 
 
     <FrameLayout
-        android:id="@+id/frameLayout"
         android:layout_width="300dp"
         android:layout_height="300dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -29,7 +28,7 @@
             android:layout_height="100dp"
             android:fontFamily="@font/oceanwide_semibold"
             android:gravity="center"
-            android:text="reCharge"
+            android:text="@string/app_name"
             android:textColor="#edf0f5"
             android:textSize="40sp" />
     </FrameLayout>

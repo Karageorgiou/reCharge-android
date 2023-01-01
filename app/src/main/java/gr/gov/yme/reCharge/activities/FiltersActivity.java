@@ -1,7 +1,7 @@
 package gr.gov.yme.reCharge.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,10 +11,8 @@ import gr.gov.yme.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 public class FiltersActivity extends AppCompatActivity {
@@ -32,13 +30,7 @@ public class FiltersActivity extends AppCompatActivity {
                     .replace(R.id.filters, new SettingsFragment())
                     .commit();
         }
-        /*ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
 
-
-
-        }*/
 
 
         //find toolbar
@@ -48,12 +40,6 @@ public class FiltersActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        /*toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });*/
     }
 
 
@@ -79,10 +65,10 @@ public class FiltersActivity extends AppCompatActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
-        private String TAG = "FiltersActivity -> SettingsFragment extends PreferenceFragmentCompat";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            String TAG = "FiltersActivity -> SettingsFragment extends PreferenceFragmentCompat";
             Log.i(TAG,"onCreatePreferences: ");
 
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
@@ -91,7 +77,7 @@ public class FiltersActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-            view.setBackgroundColor(getResources().getColor(R.color.gray_800));
+            view.setBackgroundColor(Color.rgb(0,53,117));
             super.onViewCreated(view, savedInstanceState);
         }
     }

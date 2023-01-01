@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdapter.ConnectorViewHolder> {
 
@@ -57,25 +56,25 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
         //todo write set methods
 
         if (connectorItem.standard.compareTo("IEC_62196_T1") == 0) {
-            connectorViewHolder.type.setText("Type 1");
+            connectorViewHolder.type.setText(R.string.type_1);
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_typ1);
         } else if (connectorItem.standard.compareTo("IEC_62196_T2") == 0) {
-            connectorViewHolder.type.setText("Type 2");
+            connectorViewHolder.type.setText(R.string.type_2);
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_typ2);
         } else if (connectorItem.standard.compareTo("IEC_62196_T1_COMBO") == 0) {
-            connectorViewHolder.type.setText("Type 1 Combo");
+            connectorViewHolder.type.setText(R.string.type_1_combo);
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_ccs_typ1);
         } else if (connectorItem.standard.compareTo("IEC_62196_T2_COMBO") == 0) {
-            connectorViewHolder.type.setText("Type 2 Combo");
+            connectorViewHolder.type.setText(R.string.type_2_combo);
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_css_typ2_black);
         } else if (connectorItem.standard.compareTo("CHADEMO") == 0) {
-            connectorViewHolder.type.setText("Chademo");
+            connectorViewHolder.type.setText(R.string.chademo);
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_chademo);
-            } else if (connectorItem.standard.compareTo("DOMESTIC_F") == 0) {
-            connectorViewHolder.type.setText("Πρίζα");
+        } else if (connectorItem.standard.compareTo("DOMESTIC_F") == 0) {
+            connectorViewHolder.type.setText(R.string.domestic_f);
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_connector_schuko);
         } else {
-            connectorViewHolder.type.setText("N/A");
+            connectorViewHolder.type.setText(R.string.n_a);
             connectorViewHolder.imageView.setImageResource(R.drawable.ic_no_image);
         }
 
@@ -92,56 +91,19 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
 
         }
 
-
-        String dateNtime = connectorItem.lastUpdated.toLowerCase(Locale.ROOT).replace("t"," ");
-        String newDate = getNewDate(dateNtime);
-        Log.i(TAG,newDate);
-        //String time = " ";
-
-        connectorViewHolder.last_update_date.setText(newDate);
-        connectorViewHolder.last_update_date.setVisibility(View.INVISIBLE);
+        if (connectorItem.openApiTariffs != null) {
+            connectorViewHolder.price.setText(connectorItem.openApiTariffs.get(0).elements.get(0).priceComponents.get(0).price);
+        }
         //connectorViewHolder.last_update_time.setText(time);
 
     }
 
-    public String getNewDate(String dateAndTime){
-
-        SimpleDateFormat oldFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        oldFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date value = null;
-        String dueDateAsNormal ="";
-        try {
-            value = oldFormatter.parse(dateAndTime);
-            SimpleDateFormat newFormatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss ");
-
-            newFormatter.setTimeZone(TimeZone.getDefault());
-            dueDateAsNormal = newFormatter.format(value);
-        } catch (ParseException e) {
-            Log.e(TAG,e.getMessage());
-            e.printStackTrace();
-        }
-
-        return dueDateAsNormal;
-    }
-
-
-
 
     @Override
     public int getItemCount() {
-
-        // This method returns the number
-        // of items we have added
-        // in the ChildItemList
-        // i.e. the number of instances
-        // of the ChildItemList
-        // that have been created
         return connectorItemList.size();
     }
 
-    // This class is to initialize
-    // the Views present
-    // in the child RecyclerView
     class ConnectorViewHolder extends RecyclerView.ViewHolder {
 
         //TextView ChildItemTitle;
@@ -152,7 +114,7 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
         TextView volt;
         TextView amp;
         TextView power;
-        TextView last_update_date;
+        TextView price;
         //TextView last_update_time;
 
 
@@ -166,7 +128,7 @@ public class ConnectorItemAdapter extends RecyclerView.Adapter<ConnectorItemAdap
             volt = itemView.findViewById(R.id.connector_volt);
             amp = itemView.findViewById(R.id.connector_amp);
             power = itemView.findViewById(R.id.connector_power);
-            last_update_date = itemView.findViewById(R.id.connector_last_updated_date);
+            price = itemView.findViewById(R.id.connector_price);
             //last_update_time = itemView.findViewById(R.id.connector_last_updated_time);
         }
     }

@@ -10,10 +10,6 @@ import android.view.MotionEvent;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.CopyrightOverlay;
 
-import java.net.URL;
-
-import gr.gov.yme.R;
-
 public class CustomCopyrightOverlay extends CopyrightOverlay {
     private static final String TAG = "CustomCopyrightOverlay";
     Context ctx;
