@@ -26,4 +26,7 @@ public class Properties {
     @SerializedName("Logo")
     @Expose
     public String logo;
+    @SerializedName("DateTimeStatus")
+    @Expose
+    public String dateTimeStatus;
 }
