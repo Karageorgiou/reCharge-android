@@ -1,15 +1,10 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--<PreferenceCategory app:title="Μέγιστη Απόσταση">
-        <SeekBarPreference
-            app:key="key_dc"
-            app:showSeekBarValue="true"
-            app:summary="Χιλιόμετρα"
-            app:title="Απόσταση απο την τοποθεσία μου" />
-    </PreferenceCategory>-->
-
-    <PreferenceCategory app:title="Τύπος Ρευματοδότη">
+    <PreferenceCategory
+        android:layout="@layout/preferences_category"
+        app:title="Τύπος Ρευματοδότη"
+        >
         <SwitchPreferenceCompat
             app:icon="@drawable/ic_connector_typ1_white"
             app:key="key_type1"
@@ -24,7 +19,6 @@
             app:title="CCS - Type 1 " />
         <SwitchPreferenceCompat
             app:icon="@drawable/ic_connector_css_typ2_white"
-            android:tint="@color/white"
             app:key="key_type2css"
             app:title="CCS - Type 2" />
         <SwitchPreferenceCompat
@@ -41,8 +35,11 @@
             app:title="Tesla" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Τύπος Ρεύματος">
+    <PreferenceCategory
+        android:layout="@layout/preferences_category"
+        app:title="Τύπος Ρεύματος">
         <SwitchPreferenceCompat
+
             app:key="key_dc"
             app:title="DC" />
         <SwitchPreferenceCompat
@@ -59,7 +56,9 @@
             app:title="AC 3 Phase" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Τύπος Υποδοχέα">
+    <PreferenceCategory
+        android:layout="@layout/preferences_category"
+        app:title="Τύπος Υποδοχέα">
         <ListPreference
             app:entries="@array/evse_plug_entries"
             app:entryValues="@array/evse_plug_values"
@@ -69,14 +68,17 @@
             android:defaultValue="@string/initVal"/>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Κατάσταση Σημείου Φόρτισης">
+    <PreferenceCategory
+        android:layout="@layout/preferences_category"
+        app:title="Κατάσταση Σημείου Φόρτισης">
         <ListPreference
             app:entries="@array/evse_status_entries"
             app:entryValues="@array/evse_status_values"
             app:key="key_status"
             app:title="Επιλέξτε κατάσταση"
             app:useSimpleSummaryProvider="true"
-            android:defaultValue="@string/initVal"/>
+            android:defaultValue="@string/initVal"
+            />
     </PreferenceCategory>
 
     <PreferenceCategory>
