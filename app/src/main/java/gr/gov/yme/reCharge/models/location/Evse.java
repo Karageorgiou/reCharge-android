@@ -43,6 +43,10 @@ public class Evse {
     public String lastUpdated;
 
 
+
+    public String position;
+
+
     public List<Connector> getConnectorItemList()
     {
         return connectors;
@@ -81,7 +85,43 @@ public class Evse {
         @SerializedName("last_updated")
         @Expose
         public String lastUpdated;
+        @SerializedName("_openapiTariffs")
+        @Expose
+        public List<OpenApiTariff> openApiTariffs = null;
 
 
+    }
+
+    public static class OpenApiTariff {
+        @SerializedName("currency")
+        @Expose
+        public String currency;
+        @SerializedName("type")
+        @Expose
+        public String type;
+        @SerializedName("elements")
+        @Expose
+        public List<Element> elements = null;
+        @SerializedName("last_updated")
+        @Expose
+        public String lastUpdated;
+    }
+
+    public static class Element {
+        @SerializedName("price_components")
+        @Expose
+        public List<PriceComponent> priceComponents = null;
+    }
+
+    public static class PriceComponent {
+        @SerializedName("type")
+        @Expose
+        public String type;
+        @SerializedName("price")
+        @Expose
+        public String price;
+        @SerializedName("step_size")
+        @Expose
+        public int stepSize;
     }
 }

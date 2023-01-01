@@ -1,13 +1,5 @@
 package gr.gov.yme.reCharge.util;
 
-
-import gr.gov.yme.R;
-import gr.gov.yme.reCharge.models.location.Evse;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
@@ -15,42 +7,49 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseViewHolder> {
+import gr.gov.yme.R;
+import gr.gov.yme.reCharge.models.location.Evse;
 
-    String TAG = "EvseItemAdapter";
-    // An object of RecyclerView.RecycledViewPool
-    // is created to share the Views
-    // between the child and
-    // the parent RecyclerViews
-    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+public class EvsePagerAdapter extends RecyclerView.Adapter<EvsePagerAdapter.EvseViewHolder> {
+    String TAG = "EvsePagerAdapter";
+    private Context ctx;
+
+
     private List<Evse> evseItemList;
-    private Context context;
+    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
 
-    public EvseItemAdapter(Context context, List<Evse> evseItemList) {
-        this.context = context;
+    // Constructor of our ViewPager2Adapter class
+    public EvsePagerAdapter(Context ctx, List<Evse> evseItemList) {
+        this.ctx = ctx;
         this.evseItemList = evseItemList;
     }
 
+    // This method returns our layout
     @NonNull
     @Override
-    public EvseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public EvseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(ctx).inflate(R.layout.parent_item, parent, false);
 
-        // Here we inflate the corresponding
-        // layout of the parent item
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.parent_item, viewGroup, false);
+
+
         return new EvseViewHolder(view);
     }
 
+    // This method binds the screen with the view
     @Override
     public void onBindViewHolder(@NonNull EvseViewHolder evseViewHolder, int position) {
-
         // Create an instance of the evseItem
         // class for the given position
         Evse evseItem = evseItemList.get(position);
@@ -58,9 +57,6 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
         // For the created instance,
         // get the title and set it
         // as the text for the TextView
-
-
-        //todo write setText for everything
 
         evseViewHolder.evse_id.setText(evseItem.evseId);
 
@@ -90,8 +86,7 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
         Log.i(TAG,newDate);
         evseViewHolder.last_update.setText(newDate);
 
-
-        GridLayoutManager layoutManager = new GridLayoutManager(context, 1);
+        GridLayoutManager layoutManager = new GridLayoutManager(ctx, 1);
 
 
         //LinearLayoutManager layoutManager = new LinearLayoutManager(evseViewHolder.ChildRecyclerView.getContext(),LinearLayoutManager.VERTICAL, false);
@@ -119,20 +114,19 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
         evseViewHolder.ChildRecyclerView.setAdapter(connectorItemAdapter);
 
         evseViewHolder.ChildRecyclerView.setRecycledViewPool(viewPool);
-    }
 
+
+    }
 
     @Override
     public int getItemCount() {
-
         if (evseItemList == null) {
             return 0;
         } else {
             return evseItemList.size();
         }
-
-
     }
+
 
     public String getNewDate(String dateAndTime){
 
@@ -155,9 +149,9 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
     }
 
 
-    class EvseViewHolder
-            extends RecyclerView.ViewHolder {
 
+    // The ViewHolder class holds the view
+    public static class EvseViewHolder extends RecyclerView.ViewHolder {
         private RecyclerView ChildRecyclerView;
 
         private TextView evse_id;
@@ -179,3 +173,4 @@ public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseVi
         }
     }
 }
+
