@@ -3,20 +3,37 @@
     <style name="Theme.Electrokinisi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryVariant">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/light_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/light_blue</item>
         <item name="colorSecondaryVariant">@color/light_blue</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <item name="android:statusBarColor" >?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:textColor">@color/white</item>
         <item name="windowNoTitle">true</item>
-        <!--<item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>-->
+        <!--<item name="colorAccent">@color/white</item>-->
+
+        <item name="alertDialogTheme">@style/DialogTheme</item>
+        <!--<item name="switchStyle">@style/SwitchCompatStyle</item>-->
+
     </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorBackground">@color/blue</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="textColorAlertDialogListItem">@color/white</item>
+    </style>
+
+
+    <!--<style name="SwitchCompatStyle" >
+        <item name="thumbTint">@color/switch_color</item>
+        <item name="trackTint">@color/switch_color</item>
+    </style>-->
+
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen.IconBackground">
         <!-- Set the splash screen background, animated icon, and animation duration. -->
@@ -25,7 +42,12 @@
 
         <!-- Use windowSplashScreenAnimatedIcon to add either a drawable or an
              animated drawable. One of these is required. -->
-        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_anim</item>
+
+
+
+        <!--<item name="windowSplashScreenAnimatedIcon">@drawable/avd_anim</item>-->
+
+
         <!--<item name="windowSplashScreenAnimationDuration">5000</item>-->
 
         <!-- Set the theme of the Activity that directly follows your splash screen. -->
@@ -33,25 +55,4 @@
         <item name="postSplashScreenTheme">@style/Theme.Electrokinisi</item>
     </style>
 
-    <style name="SquareFloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
-        <item name="shapeAppearanceOverlay">
-            @style/FabShapeStyle1
-        </item>
-    </style>
-
-    <style name="FabShapeStyle1" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerSize">20%</item>
-        <item name="cornerFamilyTopLeft">rounded</item>
-        <item name="cornerFamilyTopRight">rounded</item>
-        <item name="cornerFamilyBottomLeft">rounded</item>
-        <item name="cornerFamilyBottomRight">rounded</item>
-    </style>
-
-    <style name="ConnectorInfoFont" parent="MaterialAlertDialog.Material3.Body.Text">
-        <item name="android:textSize">12sp</item>
-    </style>
-    <!--<style name="PreferenceTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="android:background">#38414C</item>
-    </style>-->
 </resources>

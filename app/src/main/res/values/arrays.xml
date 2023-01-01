@@ -1,13 +1,13 @@
 <resources>
     <!-- Reply Preference -->
     <string-array name="evse_status_entries">
-        <item>Available</item>
-        <item>Blocked</item>
-        <item>Charging</item>
-        <item>Inoperative</item>
-        <item>Out of order</item>
-        <item>Reserved</item>
-        <item>No Restriction</item>
+        <item>Διαθέσιμο</item>
+        <item>Μπλοκαρισμένο</item>
+        <item>Σε χρήση</item>
+        <item>Σε αδράνεια</item>
+        <item>Εκτός Λειτουργίας</item>
+        <item>Κατοχυρωμένο</item>
+        <item>Χωρίς Περιορισμό</item>
     </string-array>
 
     <string-array name="evse_status_values">
@@ -27,9 +27,9 @@
 
 
     <string-array name="evse_plug_entries">
-        <item>Cable</item>
-        <item>Socket</item>
-        <item>No Restriction</item>
+        <item>Καλώδιο</item>
+        <item>Πρίζα</item>
+        <item>Χωρίς Περιορισμό</item>
     </string-array>
 
     <string-array name="evse_plug_values">
