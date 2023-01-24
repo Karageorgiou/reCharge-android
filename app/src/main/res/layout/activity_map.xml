@@ -76,11 +76,11 @@
 
     <ImageButton
         android:id="@+id/btn_gps"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginTop="200dp"
         android:layout_marginEnd="10dp"
-        android:background="@drawable/btn_light_blue_background"
+        android:background="@drawable/btn_big_background"
         android:clickable="true"
         android:contentDescription="@string/btn_locate_user"
         android:focusable="true"
@@ -102,7 +102,7 @@
         android:contentDescription="@string/btn_disclaimer"
         android:focusable="true"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_btn_disclaimer"
+        android:src="@drawable/ic_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
