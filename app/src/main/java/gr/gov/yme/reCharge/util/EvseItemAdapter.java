@@ -24,7 +24,7 @@ import java.util.Locale;
 
 public class EvseItemAdapter extends RecyclerView.Adapter<EvseItemAdapter.EvseViewHolder> {
 
-    String TAG = "EvseItemAdapter";
+    final String TAG = "EvseItemAdapter";
     // An object of RecyclerView.RecycledViewPool
     // is created to share the Views
     // between the child and

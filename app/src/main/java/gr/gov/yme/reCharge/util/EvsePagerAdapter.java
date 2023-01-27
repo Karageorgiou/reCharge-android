@@ -23,7 +23,7 @@ import gr.gov.yme.R;
 import gr.gov.yme.reCharge.models.location.Evse;
 
 public class EvsePagerAdapter extends RecyclerView.Adapter<EvsePagerAdapter.EvseViewHolder> {
-    String TAG = "EvsePagerAdapter";
+    final String TAG = "EvsePagerAdapter";
     private Context ctx;
 
 

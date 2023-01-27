@@ -106,7 +106,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapActivity extends AppCompatActivity {
-    private String TAG = "MapActivity ";
+    private final String TAG = "MapActivity ";
     Context ctx;
 
     Location lastUserLocation;
@@ -602,7 +602,9 @@ public class MapActivity extends AppCompatActivity {
         disclaimer_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DisclaimerDialogFragment().show(getSupportFragmentManager(),"DisclaimerDialog");
+                //new DisclaimerDialogFragment().show(getSupportFragmentManager(),"DisclaimerDialog");
+                Intent goToDisclaimer = new Intent(ctx, DisclaimerActivity.class);
+                startActivity(goToDisclaimer);
             }
         });
 

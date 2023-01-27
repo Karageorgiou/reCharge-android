@@ -15,8 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceFragmentCompat;
 
+import java.util.Objects;
+
 public class FiltersActivity extends AppCompatActivity {
-   public String TAG = "FiltersActivity";
+   public final String TAG = "FiltersActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,7 @@ public class FiltersActivity extends AppCompatActivity {
         //find toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -58,9 +60,9 @@ public class FiltersActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intentWithResult = new Intent();
+        /*Intent intentWithResult = new Intent();
         intentWithResult.putExtra("FROM_ACTIVITY","FILTERS");
-        setResult(1,intentWithResult);
+        setResult(1,intentWithResult);*/
         super.onBackPressed();
     }
 
@@ -68,7 +70,7 @@ public class FiltersActivity extends AppCompatActivity {
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            String TAG = "FiltersActivity -> SettingsFragment extends PreferenceFragmentCompat";
+            final String TAG = "FiltersActivity -> SettingsFragment extends PreferenceFragmentCompat";
             Log.i(TAG,"onCreatePreferences: ");
 
             setPreferencesFromResource(R.xml.root_preferences, rootKey);

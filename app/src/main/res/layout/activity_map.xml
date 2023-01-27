@@ -32,7 +32,7 @@
         android:layout_marginBottom="15dp"
         android:text="@string/copyright"
         android:textColor="@color/black"
-        android:textSize="13sp"
+        android:textSize="13dp"
         app:layout_constraintBottom_toTopOf="@id/btn_filter"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -20,7 +20,4 @@ public class DisclaimerDialogFragment extends DialogFragment {
                 .create();
 
     }
-
-
-    public static String TAG = "DisclaimerDialog";
 }
