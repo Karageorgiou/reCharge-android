@@ -51,6 +51,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".reCharge.activities.DisclaimerActivity"
+            android:exported="true"
+            android:label="@string/title_activity_disclaimer"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
             android:name=".reCharge.activities.MapActivity"
             android:exported="true"
             android:configChanges="orientation"
