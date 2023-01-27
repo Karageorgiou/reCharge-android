@@ -8,11 +8,11 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "gr.gov.yme.reCharge"
+        applicationId "gr.gov.reCharge"
         minSdk 24
         targetSdk 32
-        versionCode 7
-        versionName "1.1.7"
+        versionCode 8
+        versionName "1.1.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
