@@ -10,49 +10,53 @@
         <item name="colorSecondaryVariant">@color/light_blue</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimary</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:textColor">@color/white</item>
         <item name="windowNoTitle">true</item>
-        <!--<item name="colorAccent">@color/white</item>-->
-
+        <!-- <item name="colorAccent">@color/white</item>-->
         <item name="alertDialogTheme">@style/DialogTheme</item>
+        <item name="dialogTheme">@style/EnableGPSTheme</item>
         <!--<item name="switchStyle">@style/SwitchCompatStyle</item>-->
 
     </style>
+
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:colorBackground">@color/blue</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="textColorAlertDialogListItem">@color/white</item>
+        <item name="dialogCornerRadius">20dp</item>
     </style>
 
+    <style name="EnableGPSTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">#5AB2F4</item>
+        <item name="dialogCornerRadius">20dp</item>
+    </style>
 
     <!--<style name="SwitchCompatStyle" >
         <item name="thumbTint">@color/switch_color</item>
         <item name="trackTint">@color/switch_color</item>
     </style>-->
 
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
 
-    <style name="Theme.App.Starting" parent="Theme.SplashScreen.IconBackground">
+
         <!-- Set the splash screen background, animated icon, and animation duration. -->
-        <item name="windowSplashScreenBackground">@color/blue</item>
-<!--        <item name="windowSplashScreenIconBackgroundColor">@drawable/gradient</item>-->
-
+        <item name="windowSplashScreenBackground">@raw/three_dots_loading</item>
         <!-- Use windowSplashScreenAnimatedIcon to add either a drawable or an
              animated drawable. One of these is required. -->
-
-
-
-        <!--<item name="windowSplashScreenAnimatedIcon">@drawable/avd_anim</item>-->
-
-
-        <!--<item name="windowSplashScreenAnimationDuration">5000</item>-->
+        <item name="windowSplashScreenAnimatedIcon">@raw/bucket_loading</item>
+        <!-- Required for animated icons -->
+        <item name="windowSplashScreenAnimationDuration">2000</item>
 
         <!-- Set the theme of the Activity that directly follows your splash screen. -->
         <!-- Required -->
         <item name="postSplashScreenTheme">@style/Theme.Electrokinisi</item>
     </style>
+
 
 </resources>
