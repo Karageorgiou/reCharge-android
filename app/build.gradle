@@ -2,7 +2,9 @@ plugins {
     id 'com.android.application'
 }
 
-
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
 android {
     compileSdk 32
@@ -11,10 +13,13 @@ android {
         applicationId "gr.gov.reCharge"
         minSdk 24
         targetSdk 32
-        versionCode 10
-        versionName "1.1.10"
+        versionCode 11
+        versionName "1.1.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "USERNAME", apikeyProperties['USERNAME'])
+        buildConfigField("String", "PASSWORD", apikeyProperties['PASSWORD'])
     }
 
     buildTypes {

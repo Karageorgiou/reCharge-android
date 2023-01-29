@@ -1,7 +1,6 @@
 package gr.gov.yme.reCharge.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -19,15 +18,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,8 +48,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -78,13 +77,14 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import dev.shreyaspatil.MaterialDialog.MaterialDialog;
+import gr.gov.yme.BuildConfig;
 import gr.gov.yme.R;
 import gr.gov.yme.reCharge.models.ChargePointMarker;
 import gr.gov.yme.reCharge.models.feature.Feature;
 import gr.gov.yme.reCharge.models.location.Image;
 import gr.gov.yme.reCharge.network.receivers.FeatureReceiver;
 import gr.gov.yme.reCharge.sqlite.CustomSQLiteHelper;
-import gr.gov.yme.reCharge.util.DisclaimerDialogFragment;
+import gr.gov.yme.reCharge.util.EnableGPSDialogFragment;
 import gr.gov.yme.reCharge.util.EvseItemAdapter;
 import gr.gov.yme.reCharge.util.EvsePagerAdapter;
 import gr.gov.yme.reCharge.util.FilterVariables;
@@ -114,7 +114,7 @@ public class MapActivity extends AppCompatActivity {
     private List<Double> currentMarkerCoordinates;
     boolean isFirstTime = true;
 
-    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 44;
+    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 100;
     /********************** Network Variables **********************/
     final String BASE_URL = "https://electrokinisi.yme.gov.gr/myfah-api/openApi/";
     //Client Variables
@@ -134,9 +134,7 @@ public class MapActivity extends AppCompatActivity {
     Retrofit filteredLocationsRetrofit;
     ChargePointApiService filteredLocationsChargePointApiService;
     Call<FeatureReceiver> getLocationsFilteredCall;
-    //Network Credentials
-    private String USERNAME = "user1234";
-    private String PASSWORD = "2372a5d0-e2c4-4a66-a102-719f7843e57b";
+
 
     WrapContentLinearLayoutManager layoutManager1;
     WrapContentLinearLayoutManager layoutManager2;
@@ -154,6 +152,9 @@ public class MapActivity extends AppCompatActivity {
     public ImageView ic_drag;
     public RecyclerView parentRecyclerViewItem;
     public RecyclerView imagesRecyclerViewItem;
+    public ProgressBar spinner;
+    public ConstraintLayout blur;
+
 
     public TabLayout tabLayout;
     public ViewPager2 viewPager;
@@ -203,8 +204,10 @@ public class MapActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate: running");
         ctx = getApplicationContext();
         setContentView(R.layout.activity_map);
+
+
         findViews();
-        requestPermissions();
+        //requestPermissions();
         runInitMethods();
         getToken();
     }
@@ -324,15 +327,19 @@ public class MapActivity extends AppCompatActivity {
         sheetTopUnder = findViewById(R.id.constraint_1);
         //parentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
         imagesRecyclerViewItem = findViewById(R.id.recycler_view_images);
-
+        spinner = findViewById(R.id.progressBar1);
+        blur = findViewById(R.id.blur1);
+        blur.setVisibility(View.GONE);
+        spinner.setVisibility(View.GONE);
         viewPager = findViewById(R.id.viewpager);
         tabLayout = findViewById(R.id.tabLayout);
 
         Log.d(TAG, "Loading Dialog Created");
-        mapLoading = new MaterialDialog.Builder(this)
+        MaterialDialog.Builder mapLoadingBuilder = (MaterialDialog.Builder) new MaterialDialog.Builder(this)
                 .setAnimation(R.raw.bucket_loading)
-                .setMessage("Φόρτωση Σημείων")
-                .build();
+                .setMessage("Φόρτωση Σημείων");
+
+        mapLoading = mapLoadingBuilder.build();
         pinLoading = new MaterialDialog.Builder(this)
                 .setAnimation(R.raw.three_dots_loading)
                 .setMessage("Φόρτωση Τοποθεσίας")
@@ -351,6 +358,7 @@ public class MapActivity extends AppCompatActivity {
         initRecyclerViews();
         initListeners();
     }
+
     private void initMap() {
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         map = findViewById(R.id.mapView);
@@ -438,8 +446,12 @@ public class MapActivity extends AppCompatActivity {
         clusterBackgroundDrawable.draw(canvas);
 
     }
+
     private void initRetrofit() {
         // TOKEN CLIENT
+        //Network Credentials
+        String USERNAME = BuildConfig.USERNAME;
+        String PASSWORD = BuildConfig.PASSWORD;
         authorizationClient = new OkHttpClient.Builder()
                 .addInterceptor(new BasicAuthInterceptor(USERNAME, PASSWORD))
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -472,6 +484,7 @@ public class MapActivity extends AppCompatActivity {
                 .build();
         filteredLocationsChargePointApiService = filteredLocationsRetrofit.create(ChargePointApiService.class);
     }
+
     private void initBottomSheet() {
         // Bottom Sheet
         Drawable icDragUp = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_drag_up, null);
@@ -546,10 +559,12 @@ public class MapActivity extends AppCompatActivity {
             }
         });
     }
+
     private void initToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
+
     private void initRecyclerViews() {
         /*layoutManager1 = new WrapContentLinearLayoutManager(MapActivity.this, WrapContentLinearLayoutManager.HORIZONTAL, false);
         evseItemAdapter = new EvseItemAdapter(ctx, evseList);
@@ -563,7 +578,6 @@ public class MapActivity extends AppCompatActivity {
         imagesRecyclerViewItem.setAdapter(imageAdapter);
 
 
-
         evsePagerAdapter = new EvsePagerAdapter(this, evseList);
 
         // adding the adapter to viewPager2
@@ -575,6 +589,7 @@ public class MapActivity extends AppCompatActivity {
         }).attach();
 
     }
+
     private void initListeners() {
         Log.i(TAG, "initListeners: initializing");
 
@@ -583,8 +598,6 @@ public class MapActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked gps icon");
                 getLastLocation();
-                updateLocationOnMap(lastUserLocation);
-                //
             }
         });
 
@@ -602,7 +615,6 @@ public class MapActivity extends AppCompatActivity {
         disclaimer_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //new DisclaimerDialogFragment().show(getSupportFragmentManager(),"DisclaimerDialog");
                 Intent goToDisclaimer = new Intent(ctx, DisclaimerActivity.class);
                 startActivity(goToDisclaimer);
             }
@@ -642,12 +654,17 @@ public class MapActivity extends AppCompatActivity {
             }
         });
     }
+
     /******************* ---------------------- *******************/
 
     public void getToken() {
 
 
-        mapLoading.show();
+//        mapLoading.show();
+        spinner.setVisibility(View.VISIBLE);
+        blur.setVisibility(View.VISIBLE);
+
+
 
         getTokenCall = tokenChargePointApiService.getToken();
         getTokenCall.enqueue(new Callback<TokenReceiver>() {
@@ -663,9 +680,14 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<TokenReceiver> call, Throwable t) {
                 Log.e("TOKEN CALL FAILURE: ", t.getMessage());
-                if (mapLoading != null) {
+                /*if (mapLoading != null) {
                     mapLoading.dismiss();
+                }*/
+                if (spinner.getVisibility() != View.GONE) {
+                    spinner.setVisibility(View.GONE);
+                    blur.setVisibility(View.GONE);
                 }
+
             }
 
         });
@@ -674,7 +696,9 @@ public class MapActivity extends AppCompatActivity {
     public void getTokenWithFilters() {
         Log.d(TAG, "Loading Dialog Created");
 
-        mapLoading.show();
+//        mapLoading.show();
+        spinner.setVisibility(View.VISIBLE);
+        blur.setVisibility(View.VISIBLE);
 
         getGetTokenWithFiltersCall = tokenChargePointApiService.getToken();
         getGetTokenWithFiltersCall.enqueue(new Callback<TokenReceiver>() {
@@ -691,8 +715,12 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<TokenReceiver> call, Throwable t) {
                 Log.e("TOKEN CALL FAILURE: ", t.getMessage());
-                if (mapLoading != null) {
+                /*if (mapLoading != null) {
                     mapLoading.dismiss();
+                }*/
+                if (spinner.getVisibility() != View.GONE) {
+                    spinner.setVisibility(View.GONE);
+                    blur.setVisibility(View.GONE);
                 }
             }
 
@@ -717,16 +745,24 @@ public class MapActivity extends AppCompatActivity {
 
                 setFeaturesOnMap(featureList, locationsChargePointApiService, token);
 
-                if (mapLoading != null) {
+                /*if (mapLoading != null) {
                     mapLoading.dismiss();
+                }*/
+                if (spinner.getVisibility() != View.GONE) {
+                    spinner.setVisibility(View.GONE);
+                    blur.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<FeatureReceiver> call, Throwable t) {
                 Log.e(TAG + " getPoints", t.getMessage());
-                if (mapLoading != null) {
+                /*if (mapLoading != null) {
                     mapLoading.dismiss();
+                }*/
+                if (spinner.getVisibility() != View.GONE) {
+                    spinner.setVisibility(View.GONE);
+                    blur.setVisibility(View.GONE);
                 }
             }
         });
@@ -756,8 +792,12 @@ public class MapActivity extends AppCompatActivity {
                 if (featureReceiver.status.equals("error")) {
                     Log.e(TAG, featureReceiver.statusDesc);
                     Toast.makeText(ctx, "Δεν βρέθηκαν σημεία με αυτά τα χαρακτηριστικά.", Toast.LENGTH_SHORT).show();
-                    if (mapLoading != null) {
+                    /*if (mapLoading != null) {
                         mapLoading.dismiss();
+                    }*/
+                    if (spinner.getVisibility() != View.GONE) {
+                        spinner.setVisibility(View.GONE);
+                        blur.setVisibility(View.GONE);
                     }
                     return;
                 }
@@ -771,16 +811,24 @@ public class MapActivity extends AppCompatActivity {
                 Toast.makeText(ctx, "Βρέθηκαν " + featureList.size() + " σημεία", Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Βρέθηκαν " + featureList.size() + " σημεία");
                 setFeaturesOnMap(featureList, locationsChargePointApiService, token);
-                if (mapLoading != null) {
+                /*if (mapLoading != null) {
                     mapLoading.dismiss();
+                }*/
+                if (spinner.getVisibility() != View.GONE) {
+                    spinner.setVisibility(View.GONE);
+                    blur.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<FeatureReceiver> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
-                if (mapLoading != null) {
+                /*if (mapLoading != null) {
                     mapLoading.dismiss();
+                }*/
+                if (spinner.getVisibility() != View.GONE) {
+                    spinner.setVisibility(View.GONE);
+                    blur.setVisibility(View.GONE);
                 }
             }
         });
@@ -913,7 +961,7 @@ public class MapActivity extends AppCompatActivity {
 
         evseList.clear();
         for (int j = 0; j < location.evses.size(); j++) {
-            location.evses.get(j).position = String.valueOf(j+1);
+            location.evses.get(j).position = String.valueOf(j + 1);
             evseList.add(location.evses.get(j));
         }
         evsePagerAdapter.notifyDataSetChanged();
@@ -1076,38 +1124,27 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("MissingPermission")
     private void getLastLocation() {
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
-                Task<Location> location = mFusedLocationClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            Log.e(TAG, "getLastLocation onComplete: found location");
-                            lastUserLocation = (Location) task.getResult();
-                            if (lastUserLocation == null) {
-                                requestNewLocationData();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "Permissions granted");
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            Log.i(TAG, "getLastLocation(): Success");
+                            if (location != null) {
+                                lastUserLocation = location;
+                                updateLocationOnMap(lastUserLocation);
+                            } else if (!isLocationEnabled()){
+                                EnableGPSDialogFragment enableGPSDialogFragment = new EnableGPSDialogFragment();
+                                enableGPSDialogFragment.show(getSupportFragmentManager(),"EnableGPSDialog");
                             }
-                        } else {
-                            Log.e(TAG, "getLastLocation onComplete: current location is null");
                         }
-                    }
-                });
-            } else {
-                Toast.makeText(this, "Παρακαλώ επιτρέψτε την πρόσβαση στην τοποθεσία της συσκευής", Toast.LENGTH_LONG).show();
-                Intent getLocationPermission = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(getLocationPermission);
-            }
+                    });
         } else {
             requestPermissions();
         }
-    }
-
-    private boolean checkPermissions() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermissions() {
@@ -1121,31 +1158,6 @@ public class MapActivity extends AppCompatActivity {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    @SuppressLint("MissingPermission")
-    private void requestNewLocationData() {
-        Log.e(TAG, "requestNewLocationData: running");
-        /*LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setNumUpdates(1);*/
-        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 5000)
-                .setWaitForAccurateLocation(false)
-                .build();
-
-        // setting LocationRequest on FusedLocationClient
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
-    }
-
-    private LocationCallback mLocationCallback = new LocationCallback() {
-
-        @Override
-        public void onLocationResult(@NonNull LocationResult locationResult) {
-            Log.e(TAG, "LocationCallback onLocationResult: success");
-        }
-    };
-
     private void updateLocationOnMap(Location location) {
 
         moveCamera(location, map.getZoomLevelDouble());
@@ -1155,6 +1167,4 @@ public class MapActivity extends AppCompatActivity {
         GeoPoint userLocation = new GeoPoint(location);
         mapController.animateTo(userLocation, zoom, 1200L);
     }
-
-
 }
