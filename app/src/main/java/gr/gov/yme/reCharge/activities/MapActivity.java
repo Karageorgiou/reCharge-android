@@ -1,5 +1,6 @@
 package gr.gov.yme.reCharge.activities;
 
+import gr.gov.yme.BuildConfig;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,14 +17,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -70,6 +69,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +77,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import dev.shreyaspatil.MaterialDialog.MaterialDialog;
-import gr.gov.yme.BuildConfig;
 import gr.gov.yme.R;
 import gr.gov.yme.reCharge.models.ChargePointMarker;
 import gr.gov.yme.reCharge.models.feature.Feature;
@@ -89,6 +88,7 @@ import gr.gov.yme.reCharge.util.EvseItemAdapter;
 import gr.gov.yme.reCharge.util.EvsePagerAdapter;
 import gr.gov.yme.reCharge.util.FilterVariables;
 import gr.gov.yme.reCharge.util.ImageAdapter;
+import gr.gov.yme.reCharge.util.RequestPermissionsDialogFragment;
 import gr.gov.yme.reCharge.util.WrapContentLinearLayoutManager;
 import gr.gov.yme.reCharge.models.location.ChargePointLocation;
 import gr.gov.yme.reCharge.models.location.Evse;
@@ -154,6 +154,8 @@ public class MapActivity extends AppCompatActivity {
     public RecyclerView imagesRecyclerViewItem;
     public ProgressBar spinner;
     public ConstraintLayout blur;
+
+    public  TextView version;
 
 
     public TabLayout tabLayout;
@@ -334,6 +336,9 @@ public class MapActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewpager);
         tabLayout = findViewById(R.id.tabLayout);
 
+        version = findViewById(R.id.disclaimer_text_5);
+
+
         Log.d(TAG, "Loading Dialog Created");
         MaterialDialog.Builder mapLoadingBuilder = (MaterialDialog.Builder) new MaterialDialog.Builder(this)
                 .setAnimation(R.raw.bucket_loading)
@@ -452,6 +457,8 @@ public class MapActivity extends AppCompatActivity {
         //Network Credentials
         String USERNAME = BuildConfig.USERNAME;
         String PASSWORD = BuildConfig.PASSWORD;
+       /* String versionName = BuildConfig.VERSION_NAME;
+        version.setText(versionName);*/
         authorizationClient = new OkHttpClient.Builder()
                 .addInterceptor(new BasicAuthInterceptor(USERNAME, PASSWORD))
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -665,15 +672,14 @@ public class MapActivity extends AppCompatActivity {
         blur.setVisibility(View.VISIBLE);
 
 
-
         getTokenCall = tokenChargePointApiService.getToken();
         getTokenCall.enqueue(new Callback<TokenReceiver>() {
 
             @Override
             public void onResponse(Call<TokenReceiver> call, Response<TokenReceiver> response) {
                 TokenReceiver tokenReceiver = response.body();
+                assert tokenReceiver != null;
                 token = new Token(tokenReceiver.token);
-                Log.d("TOKEN CALL " + tokenReceiver.status, token.token);
                 getPoints();
             }
 
@@ -842,7 +848,7 @@ public class MapActivity extends AppCompatActivity {
         markerClusterer.setIcon(clusterBackgroundBitmap);
         markerClusterer.getTextPaint().setColor(Color.parseColor("#003575"));
         //markerClusterer.setMaxClusteringZoomLevel(15);
-        markerClusterer.setRadius(200);
+        markerClusterer.setRadius(150);
         map.getOverlays().add(markerClusterer);
         SQLiteDatabase database = new CustomSQLiteHelper(this).getReadableDatabase();
         //database.delete("location","*",null);
@@ -1136,18 +1142,21 @@ public class MapActivity extends AppCompatActivity {
                             if (location != null) {
                                 lastUserLocation = location;
                                 updateLocationOnMap(lastUserLocation);
-                            } else if (!isLocationEnabled()){
+                            } else if (!isLocationEnabled()) {
                                 EnableGPSDialogFragment enableGPSDialogFragment = new EnableGPSDialogFragment();
-                                enableGPSDialogFragment.show(getSupportFragmentManager(),"EnableGPSDialog");
+                                enableGPSDialogFragment.show(getSupportFragmentManager(), "EnableGPSDialog");
                             }
                         }
                     });
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            RequestPermissionsDialogFragment requestPermissionsDialogFragment = new RequestPermissionsDialogFragment();
+            requestPermissionsDialogFragment.show(getSupportFragmentManager(), "RequestPermissionsDialog");
         } else {
             requestPermissions();
         }
     }
 
-    private void requestPermissions() {
+    public void requestPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
